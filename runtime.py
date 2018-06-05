@@ -21,7 +21,9 @@ class Variable:
 variables = {}
 
 def runtime(p):
-    if type(p) is int or type(p) is str:
+    if type(p) is int \
+            or type(p) is str\
+            or p is None:
         return p
     else:
         if p[0] == '+':
@@ -31,62 +33,50 @@ def runtime(p):
                 return str(a) + str(b)
             else:
                 return a + b
-            # return eval(p[1]) + eval(p[2])
         elif p[0] == '-':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a - b
-            # return eval(p[1]) - eval(p[2])
         elif p[0] == '*':
             a = PlyTypeError.require(runtime(p[1]), [ int, str ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a * b
-            # return eval(p[1]) * eval(p[2])
         elif p[0] == '/':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a / b
-            # return eval(p[1]) / eval(p[2])
         elif p[0] == '**':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a ** b
-            # return eval(p[1]) ** eval(p[2])
         elif p[0] == '%':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a % b
-            # return eval(p[1]) % eval(p[2])
         elif p[0] == '<':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a < b
-            # return eval(p[1]) < eval(p[2])
         elif p[0] == '<=':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a <= b
-            # return eval(p[1]) <= eval(p[2])
         elif p[0] == '>':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a > b
-            # return eval(p[1]) > eval(p[2])
         elif p[0] == '>=':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a >= b
-            # return eval(p[1]) >= eval(p[2])
         elif p[0] == '==':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a == b
-            # return eval(p[1]) == eval(p[2])
         elif p[0] == '!=':
             a = PlyTypeError.require(runtime(p[1]), [ int ])
             b = PlyTypeError.require(runtime(p[2]), [ int ])
             return a != b
-            # return eval(p[1]) != eval(p[2])
         elif p[0] == '=':
             try:
                 variables[p[2]] 
@@ -163,9 +153,25 @@ def runtime(p):
                     if type(b) is int:
                         return a[b]
                     elif type(b) is str:
-                        return a.index(b)
+                        return a.index(b) # indexOf
             except ValueError:
                 return -1
+            except LookupError:
+                raise PlySyntaxError.undefined(p[1])
+        elif p[0] == 'SUBSTRING':
+            try:
+                variables[p[1]]
+                a = None
+
+                if variables[p[1]].type == 'simple':
+                    a = PlyTypeError.require(variables[p[1]].value, [ str ])
+                elif variables[p[1]].type == 'pointer':
+                    a = PlyTypeError.require(variables[p[1]].value.value, [ str ])
+
+                if a is not None:
+                    b = PlyTypeError.require(runtime(p[2]), [ None, int ])
+                    c = PlyTypeError.require(runtime(p[3]), [ None, int ])
+                    return a[b:c]
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         else:

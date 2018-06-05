@@ -8,7 +8,10 @@ class PlyTypeError(PlyError):
     @staticmethod
     def require(var, datatypes):
         for datatype in datatypes:
-            if type(var) is datatype:
+            if datatype is None:
+                if var is None:
+                    return var
+            elif type(var) is datatype:
                 return var
         raise PlyTypeError('this method wait a variable of type {0} instead of {1}'.format(datatypes[0], type(var)))
 

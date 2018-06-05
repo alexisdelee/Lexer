@@ -29,7 +29,7 @@ tokens = [
     'VARIABLE', 'NUMBER', 'STRING',
     'PLUS','MINUS','TIMES','DIVIDE', 'EQUALS', 'EXPONENT', 'REMAINDER',
     'LPAREN','RPAREN', 'LSQUARE', 'RSQUARE',
-    'SEMICOLON',
+    'SEMICOLON', 'COLON',
     'INFERIOR', 'INFERIOR_OR_EQUAL', 'SUPERIOR', 'SUPERIOR_OR_EQUAL', 'DOUBLE_EQUALS', 'DIFFERENT'
 ] + list(reserved.values())
 
@@ -47,6 +47,7 @@ t_RSQUARE   = r'\]'
 t_VARIABLE  = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_EQUALS    = r'='
 t_SEMICOLON = r';'
+t_COLON     = r':'
 t_INFERIOR  = r'<'
 t_INFERIOR_OR_EQUAL = r'<='
 t_SUPERIOR  = r'>'
@@ -285,6 +286,24 @@ def p_expression_group(p):
 def p_expression_select(p):
     'expression : VARIABLE LSQUARE expression RSQUARE'
     p[0] = ('AT', p[1], p[3])
+
+def p_expression_substring(p):
+    '''expression : VARIABLE LSQUARE expression COLON expression RSQUARE
+                  | VARIABLE LSQUARE COLON expression RSQUARE
+                  | VARIABLE LSQUARE expression COLON RSQUARE
+                  | VARIABLE LSQUARE COLON RSQUARE'''
+    for item in enumerate(p):
+        print(item)
+
+    if len(p) is 7:
+        p[0] = ('SUBSTRING', p[1], p[3], p[5])
+    elif len(p) is 6:
+        if p[3] == ':':
+            p[0] = ('SUBSTRING', p[1], None, p[4])
+        else:
+            p[0] = ('SUBSTRING', p[1], p[3], None)
+    elif len(p) is 5:
+        p[0] = ('SUBSTRING', p[1], None, None)
 
 def p_expression_number(p):
     'expression : NUMBER'
