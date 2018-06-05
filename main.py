@@ -4,7 +4,7 @@ from exceptions.rangeerror import PlyRangeError
 from exceptions.syntaxerror import PlySyntaxError
 from exceptions.typeerror import PlyTypeError
 
-from runtime import runtime
+from runtime import runtime, Variable
 
 reserved = {
     "if"  : "IF",
@@ -203,24 +203,29 @@ def p_statement_print(p):
 
 def p_statement_assign(p):
     'statement : VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('=', 'simple', p[1], p[3])
+    # p[0] = ('=', 'simple', p[1], p[3])
+    p[0] = ('=', Variable.number | Variable.string, p[1], p[3])
 
 def p_statement_assign_pointer(p):
     'statement : ADDRESS VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('=', 'pointer', p[2], p[4])
+    # p[0] = ('=', 'pointer', p[2], p[4])
+    p[0] = ('=', Variable.pointer, p[2], p[4])
 
 def p_statement_define(p):
     'statement : VAR VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('DEFINE', 'simple', p[2], p[4])
+    # p[0] = ('DEFINE', 'simple', p[2], p[4])
+    p[0] = ('DEFINE', Variable.number | Variable.string, p[2], p[4])
 
 def p_statement_define_pointer(p):
     'statement : PTR VARIABLE EQUALS VARIABLE SEMICOLON'
-    p[0] = ('DEFINE', 'pointer', p[2], p[4])
+    # p[0] = ('DEFINE', 'pointer', p[2], p[4])
+    p[0] = ('DEFINE', Variable.pointer, p[2], p[4])
 
 def p_statement_define_function(p):
     'statement : DEF VARIABLE LPAREN RPAREN DO block END'    
     # p[0] = ('DEFINE', 'function', p[2], p[4], p[7])
-    p[0] = ('DEFINE', 'function', p[2], None, p[6])
+    # p[0] = ('DEFINE', 'function', p[2], None, p[6])
+    p[0] = ('DEFINE', Variable.function, p[2], None, p[6])
 
 def p_statement_call_function(p):
     'statement : VARIABLE LPAREN RPAREN SEMICOLON'    
@@ -286,6 +291,7 @@ def p_expression_group(p):
 def p_expression_select(p):
     'expression : VARIABLE LSQUARE expression RSQUARE'
     p[0] = ('AT', p[1], p[3])
+    # p[0] = ('SUBSTRING', p[1], p[3], ('+', p[3], 1))
 
 def p_expression_substring(p):
     '''expression : VARIABLE LSQUARE expression COLON expression RSQUARE
