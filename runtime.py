@@ -159,8 +159,13 @@ def runtime(p):
                     a = PlyTypeError.require(variables[p[1]].value.value, [ str ])
 
                 if a is not None:
-                    b = PlyTypeError.require(runtime(p[2]), [ int ])
-                    return a[b]
+                    b = PlyTypeError.require(runtime(p[2]), [ int, str ])
+                    if type(b) is int:
+                        return a[b]
+                    elif type(b) is str:
+                        return a.index(b)
+            except ValueError:
+                return -1
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         else:
