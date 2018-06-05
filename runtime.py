@@ -25,101 +25,97 @@ class Variable:
                     self.arguments[argument[0]] = None
 
     @staticmethod
-    def getType(var):
-        if var is None:
-            return Variable.none
-        elif type(var) is int or type(var) is float:
-            return Variable.number
-        elif type(var) is str:
-            return Variable.string
+    def getScope(var):
+        _ = var.value if var.type & Variable.pointer else var
+        if _.type & Variable.pointer:
+            return Variable.getScope(_)
         else:
-            return None
+            return _
 
 # stock all used variables
 variables = {}
 
 def runtime(p):
     if type(p) is int \
-            or type(p) is str\
+            or type(p) is float \
+            or type(p) is str \
             or p is None:
         return p
     else:
         if p[0] == '+':
-            a = PlyTypeError.require(runtime(p[1]), [ int, str ])
-            b = PlyTypeError.require(runtime(p[2]), [ int, str ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float, str ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float, str ])
             if type(a) is str or type(b) is str:
                 return str(a) + str(b)
             else:
                 return a + b
         elif p[0] == '-':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a - b
         elif p[0] == '*':
-            a = PlyTypeError.require(runtime(p[1]), [ int, str ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float, str ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a * b
         elif p[0] == '/':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a / b
         elif p[0] == '**':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a ** b
         elif p[0] == '%':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a % b
         elif p[0] == '<':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a < b
         elif p[0] == '<=':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a <= b
         elif p[0] == '>':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a > b
         elif p[0] == '>=':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a >= b
         elif p[0] == '==':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a == b
         elif p[0] == '!=':
-            a = PlyTypeError.require(runtime(p[1]), [ int ])
-            b = PlyTypeError.require(runtime(p[2]), [ int ])
+            a = PlyTypeError.require(runtime(p[1]), [ int, float ])
+            b = PlyTypeError.require(runtime(p[2]), [ int, float ])
             return a != b
         elif p[0] == '=':
             try:
-                variables[p[2]] 
-                # if p[1] == 'simple':
-                    # variables[p[2]].value = runtime(p[3])
-                    # variables[p[2]].type = 'simple'
-                # elif p[1] == 'pointer':
-                    # variables[p[2]].value.value = runtime(p[3])
+                variables[p[2]]
+                _ = Variable.getScope(variables[p[2]])
+                
                 if p[1] & ( Variable.number | Variable.string ):
-                    variables[p[2]].value = runtime(p[3])
+                    a = runtime(p[3])
+                    variables[p[2]].value = a
+
+                    if type(a) is int or type(a) is float:
+                        variables[p[2]].type = Variable.number
+                    elif type(a) is str:
+                        variables[p[2]].type = Variable.string
                 elif p[1] & Variable.pointer:
-                    variables[p[2]].value.value = runtime(p[3])
+                    _.value = runtime(p[3])
             except LookupError:
                 raise PlySyntaxError.undefined(p[2])
         elif p[0] == 'RETURN':
             try:
-                variables[p[1]]                    
-                # if variables[p[1]].type == 'simple':                    
-                    # return variables[p[1]].value
-                # elif variables[p[1]].type == 'pointer':
-                    # return variables[p[1]].value.value
-                if variables[p[1]].type & ( Variable.number | Variable.string ):
-                    return variables[p[1]].value
-                elif variables[p[1]].type & Variable.pointer:
-                    return variables[p[1]].value.value
+                variables[p[1]]
+                _ = Variable.getScope(variables[p[1]])
+                if _.type & ( Variable.number | Variable.string ):
+                    return _.value
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         elif p[0] == 'DEFINE':            
@@ -127,16 +123,6 @@ def runtime(p):
                 variables[p[2]]
                 raise PlySyntaxError.defined(p[2])
             except LookupError:
-                # if p[1] == 'simple':
-                    # variables[p[2]] = Variable(runtime(p[3]), 'simple', None)
-                # elif p[1] == 'pointer':
-                    # try:
-                        # variables[p[3]]
-                        # variables[p[2]] = Variable(variables[p[3]], 'pointer', None)
-                    # except LookupError:
-                        # raise PlySyntaxError.undefined(p[3])
-                # elif p[1] == 'function':
-                    # variables[p[2]] = Variable(p[4], 'function', p[3])
                 if p[1] & ( Variable.number | Variable.string ):
                     variables[p[2]] = Variable(runtime(p[3]), p[1], None)
                 elif p[1] & Variable.pointer:
@@ -150,9 +136,11 @@ def runtime(p):
         elif p[0] == 'CALL_FUNCTION':
             try:
                 variables[p[1]]
-                if (variables[p[1]].type & Variable.function) is 0:
+                _ = Variable.getScope(variables[p[1]])
+                if _.type & Variable.function:
+                    return runtime(_.value)
+                else:
                     raise PlySyntaxError('this method wait a variable of type <class \'function\'>')
-                return runtime(variables[p[1]].value)
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         elif p[0] == 'IF':
@@ -176,24 +164,40 @@ def runtime(p):
         elif p[0] == 'PRINT':
             # return eval(p[1])
             print(runtime(p[1]))
-        elif p[0] == 'AT':
+        elif p[0] == 'SETAT':
             try:
-                variables[p[1]]
+                variables[p[2]]
                 a = None
 
-                # if variables[p[1]].type == 'simple':
-                if variables[p[1]].type & ( Variable.number | Variable.string ):
-                    a = PlyTypeError.require(variables[p[1]].value, [ str ])
-                #elif variables[p[1]].type == 'pointer':
-                elif variables[p[1]].type & Variable.pointer:
-                    a = PlyTypeError.require(variables[p[1]].value.value, [ str ])
+                if p[1] & Variable.pointer:
+                    a = [ Variable.getScope(variables[p[2]]), None ]
+                    a[1] = a[0] # avoid duplicated data
+                else:
+                    a = [ variables[p[2]], Variable.getScope(variables[p[2]]) ]
 
-                if a is not None:
-                    b = PlyTypeError.require(runtime(p[2]), [ int, str ])
-                    if type(b) is int:
-                        return a[b]
-                    elif type(b) is str:
-                        return a.index(b) # indexOf
+                b = PlyTypeError.require(runtime(p[3]), [ int ])
+                c = PlyTypeError.require(runtime(p[4]), [ str ])
+
+                d = list(a[1].value)
+                d[b] = c[0]
+                a[0].value = ''.join(d)
+                a[0].type = Variable.string
+            except LookupError:
+                raise PlySyntaxError.undefined(p[2])
+        elif p[0] == 'GETAT':
+            try:
+                variables[p[1]]
+                _ = Variable.getScope(variables[p[1]])
+
+                if _.type & Variable.string:
+                    _ = PlyTypeError.require(_.value, [ str ])
+
+                if _ is not None:
+                    a = PlyTypeError.require(runtime(p[2]), [ int, str ])
+                    if type(a) is int:
+                        return _[a]
+                    elif type(a) is str:
+                        return _.index(a) # indexOf
             except ValueError:
                 return -1
             except LookupError:
@@ -201,19 +205,30 @@ def runtime(p):
         elif p[0] == 'SUBSTRING':
             try:
                 variables[p[1]]
-                a = None
+                _ = Variable.getScope(variables[p[1]])
 
-                # if variables[p[1]].type == 'simple':
-                if variables[p[1]].type & ( Variable.number | Variable.string ):
-                    a = PlyTypeError.require(variables[p[1]].value, [ str ])
-                # elif variables[p[1]].type == 'pointer':
-                elif variables[p[1]].type & Variable.pointer:
-                    a = PlyTypeError.require(variables[p[1]].value.value, [ str ])
+                if _.type & Variable.string:
+                    _ = PlyTypeError.require(_.value, [ str ])
 
-                if a is not None:
-                    b = PlyTypeError.require(runtime(p[2]), [ None, int ])
-                    c = PlyTypeError.require(runtime(p[3]), [ None, int ])
-                    return a[b:c] # substring
+                if _ is not None:
+                    a = PlyTypeError.require(runtime(p[2]), [ None, int ])
+                    b = PlyTypeError.require(runtime(p[3]), [ None, int ])
+                    return _[a:b] # substring
+            except LookupError:
+                raise PlySyntaxError.undefined(p[1])
+        elif p[0] == 'TYPEOF':
+            try:
+                variables[p[1]]
+                if variables[p[1]].type & Variable.pointer:
+                    return 'pointer'
+                elif variables[p[1]].type & Variable.number:
+                    return 'number'
+                elif variables[p[1]].type & Variable.string:
+                    return 'string'
+                elif variables[p[1]].type & Variable.function:
+                    return 'function'
+                else:
+                    return 'none'
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         else:

@@ -22,7 +22,8 @@ reserved = {
     'do'  : 'DO',
     ','   : 'SEPARATOR',
     '&'   : 'ADDRESS',
-    '"'   : 'QUOTE'
+    '"'   : 'QUOTE',
+    'typeof': 'TYPEOF'
 }
 
 tokens = [
@@ -56,8 +57,9 @@ t_DOUBLE_EQUALS = r'=='
 t_DIFFERENT = r'!='
 
 def t_NUMBER(t):
-    r'\d+'
-    t.value = int(t.value)
+    r'\d+(\.\d+)?'
+    # t.value = int(t.value)
+    t.value = float(t.value) if '.' in t.value else int(t.value)
     return t
 
 def t_STRING(t):
@@ -140,6 +142,10 @@ def t_QUOTE(t):
     r'"'
     return t
 
+def t_TYPEOF(t):
+    r'typeof'
+    return t
+
 # Build the lexer
 import ply.lex as lex
 lex.lex()
@@ -178,20 +184,8 @@ def p_statement_condition(p):
         p[0] = ('IF', p[3], p[6])
 
 def p_statement_for(p):
-    '''statement : FOR LPAREN NUMBER TO NUMBER RPAREN NEXT block END
-                 | FOR LPAREN NUMBER TO VARIABLE RPAREN NEXT block END
-                 | FOR LPAREN VARIABLE TO NUMBER RPAREN NEXT block END
-                 | FOR LPAREN VARIABLE TO VARIABLE RPAREN NEXT block END'''
-    a = p[3]
-    b = p[5]
-
-    if type(a) is str:
-        a = ('RETURN', a)
-
-    if type(b) is str:
-        b = ('RETURN', b)
-    
-    p[0] = ('FOR', a, b, p[8])
+    '''statement : FOR LPAREN expression TO expression RPAREN NEXT block END'''
+    p[0] = ('FOR', p[3], p[5], p[8])
 
 def p_statement_while(p):
     'statement : WHILE LPAREN comparison RPAREN NEXT block END'    
@@ -203,28 +197,31 @@ def p_statement_print(p):
 
 def p_statement_assign(p):
     'statement : VARIABLE EQUALS expression SEMICOLON'
-    # p[0] = ('=', 'simple', p[1], p[3])
     p[0] = ('=', Variable.number | Variable.string, p[1], p[3])
 
 def p_statement_assign_pointer(p):
     'statement : ADDRESS VARIABLE EQUALS expression SEMICOLON'
-    # p[0] = ('=', 'pointer', p[2], p[4])
     p[0] = ('=', Variable.pointer, p[2], p[4])
+
+def p_statement_assign_element(p):
+    '''statement : VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
+                 | ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON'''
+    if len(p) is 8:
+        p[0] = ('SETAT', Variable.string, p[1], p[3], p[6])
+    else:
+        p[0] = ('SETAT', Variable.pointer, p[2], p[4], p[7])
 
 def p_statement_define(p):
     'statement : VAR VARIABLE EQUALS expression SEMICOLON'
-    # p[0] = ('DEFINE', 'simple', p[2], p[4])
     p[0] = ('DEFINE', Variable.number | Variable.string, p[2], p[4])
 
 def p_statement_define_pointer(p):
     'statement : PTR VARIABLE EQUALS VARIABLE SEMICOLON'
-    # p[0] = ('DEFINE', 'pointer', p[2], p[4])
     p[0] = ('DEFINE', Variable.pointer, p[2], p[4])
 
 def p_statement_define_function(p):
     'statement : DEF VARIABLE LPAREN RPAREN DO block END'    
     # p[0] = ('DEFINE', 'function', p[2], p[4], p[7])
-    # p[0] = ('DEFINE', 'function', p[2], None, p[6])
     p[0] = ('DEFINE', Variable.function, p[2], None, p[6])
 
 def p_statement_call_function(p):
@@ -288,19 +285,19 @@ def p_expression_group(p):
     'expression : LPAREN expression RPAREN'
     p[0] = p[2]
 
+def p_expression_typeof(p):
+    'expression : TYPEOF LPAREN VARIABLE RPAREN'
+    p[0] = ('TYPEOF', p[3])
+
 def p_expression_select(p):
     'expression : VARIABLE LSQUARE expression RSQUARE'
-    p[0] = ('AT', p[1], p[3])
-    # p[0] = ('SUBSTRING', p[1], p[3], ('+', p[3], 1))
+    p[0] = ('GETAT', p[1], p[3])
 
 def p_expression_substring(p):
     '''expression : VARIABLE LSQUARE expression COLON expression RSQUARE
                   | VARIABLE LSQUARE COLON expression RSQUARE
                   | VARIABLE LSQUARE expression COLON RSQUARE
                   | VARIABLE LSQUARE COLON RSQUARE'''
-    for item in enumerate(p):
-        print(item)
-
     if len(p) is 7:
         p[0] = ('SUBSTRING', p[1], p[3], p[5])
     elif len(p) is 6:
@@ -322,12 +319,6 @@ def p_expression_string(p):
 def p_expression_variable(p):
     'expression : VARIABLE'
     p[0] = ('RETURN', p[1])
-    
-    # try:
-        # p[0] = variables[p[1]]
-    # except LookupError:
-        # print("Undefined variable '%s'" % p[1])
-        # p[0] = 0
 
 def p_error(p):
     raise PlySyntaxError(p.value)
@@ -337,7 +328,7 @@ yacc.yacc()
 
 while True:
     try:
-        s = input('calc > ')   # use input() on Python 3
+        s = input('calc > ')
     except EOFError:
         break
 
