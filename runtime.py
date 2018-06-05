@@ -171,7 +171,7 @@ def runtime(p):
                 if a is not None:
                     b = PlyTypeError.require(runtime(p[2]), [ None, int ])
                     c = PlyTypeError.require(runtime(p[3]), [ None, int ])
-                    return a[b:c]
+                    return a[b:c] # substring
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         else:
