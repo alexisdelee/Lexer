@@ -173,11 +173,15 @@ def runtime(p):
                 variables[p[2]]
                 a = None
 
+                _ = Variable.getScope(variables[p[2]])
+                if _.writable is False:
+                    raise PlyTypeError.assignment()
+
                 if p[1] & Variable.pointer:
-                    a = [ Variable.getScope(variables[p[2]]), None ]
-                    a[1] = a[0] # avoid duplicated data
+                    print(_.value)
+                    a = [ _, _ ] # avoid duplicated data
                 else:
-                    a = [ variables[p[2]], Variable.getScope(variables[p[2]]) ]
+                    a = [ variables[p[2]], _ ]
 
                 b = PlyTypeError.require(runtime(p[3]), [ int ])
                 c = PlyTypeError.require(runtime(p[4]), [ str ])
