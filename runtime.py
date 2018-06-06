@@ -12,9 +12,10 @@ class Variable:
     array    = 16
     function = 32
     
-    def __init__(self, value, type, arguments):        
+    def __init__(self, value, type, writable, arguments):
         self.value = value
         self.type = type
+        self.writable = writable
         self.arguments = {}
 
         if arguments is not None:
@@ -96,8 +97,11 @@ def runtime(p):
         elif p[0] == '=':
             try:
                 variables[p[2]]
+
                 _ = Variable.getScope(variables[p[2]])
-                
+                if _.writable is False:
+                    raise PlyTypeError.assignment()
+
                 if p[1] & ( Variable.number | Variable.string ):
                     a = runtime(p[3])
                     variables[p[2]].value = a
@@ -124,15 +128,15 @@ def runtime(p):
                 raise PlySyntaxError.defined(p[2])
             except LookupError:
                 if p[1] & ( Variable.number | Variable.string ):
-                    variables[p[2]] = Variable(runtime(p[3]), p[1], None)
+                    variables[p[3]] = Variable(runtime(p[4]), p[1], p[2], None)
                 elif p[1] & Variable.pointer:
                     try:
-                        variables[p[3]]
-                        variables[p[2]] = Variable(variables[p[3]], p[1], None)
+                        variables[p[4]]
+                        variables[p[3]] = Variable(variables[p[4]], p[1], p[2], None)
                     except LookupError:
-                        raise PlySyntaxError.undefined(p[3])
+                        raise PlySyntaxError.undefined(p[4])
                 elif p[1] & Variable.function:
-                    variables[p[2]] = Variable(p[4], p[1], p[3])
+                    variables[p[3]] = Variable(p[5], p[1], p[2], p[4])
         elif p[0] == 'CALL_FUNCTION':
             try:
                 variables[p[1]]

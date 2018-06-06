@@ -7,22 +7,23 @@ from exceptions.typeerror import PlyTypeError
 from runtime import runtime, Variable
 
 reserved = {
-    "if"  : "IF",
-    "then": "THEN",
-    "else": "ELSE",
-    "end" : "END",
-    "for" : "FOR",
-    "while": "WHILE",
-    "to"  : "TO",
-    "next": "NEXT",
-    "print": "PRINT",
-    "var" : "VAR",
-    "ptr" : "PTR",
-    'def' : 'DEF',
-    'do'  : 'DO',
-    ','   : 'SEPARATOR',
-    '&'   : 'ADDRESS',
-    '"'   : 'QUOTE',
+    'if'    : 'IF',
+    'then'  : 'THEN',
+    'else'  : 'ELSE',
+    'end'   : 'END',
+    'for'   : 'FOR',
+    'while' : 'WHILE',
+    'to'    : 'TO',
+    'next'  : 'NEXT',
+    'print' : 'PRINT',
+    'var'   : 'VAR',
+    'const' : 'CONST',
+    'ptr'   : 'PTR',
+    'def'   : 'DEF',
+    'do'    : 'DO',
+    ','     : 'SEPARATOR',
+    '&'     : 'ADDRESS',
+    '"'     : 'QUOTE',
     'typeof': 'TYPEOF'
 }
 
@@ -118,6 +119,10 @@ def t_VAR(t):
     r'var'
     return t
 
+def t_CONST(t):
+    r'const'
+    return t
+
 def t_PTR(t):
     r'ptr'
     return t
@@ -165,7 +170,7 @@ def p_scope(p):
     
     r = runtime(p[1])
     if r is not None:
-        print(r);
+        print(r)
 
 def p_block(p):
     '''block : block statement
@@ -213,38 +218,39 @@ def p_statement_assign_element(p):
 
 def p_statement_define(p):
     'statement : VAR VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('DEFINE', Variable.number | Variable.string, p[2], p[4])
+    p[0] = ('DEFINE', Variable.number | Variable.string, True, p[2], p[4])
+
+def p_statement_define_constant(p):
+    'statement : CONST VARIABLE EQUALS expression SEMICOLON'
+    p[0] = ('DEFINE', Variable.number | Variable.string, False, p[2], p[4])
 
 def p_statement_define_pointer(p):
     'statement : PTR VARIABLE EQUALS VARIABLE SEMICOLON'
-    p[0] = ('DEFINE', Variable.pointer, p[2], p[4])
+    p[0] = ('DEFINE', Variable.pointer, True, p[2], p[4])
 
 def p_statement_define_function(p):
     'statement : DEF VARIABLE LPAREN RPAREN DO block END'    
     # p[0] = ('DEFINE', 'function', p[2], p[4], p[7])
-    p[0] = ('DEFINE', Variable.function, p[2], None, p[6])
+    p[0] = ('DEFINE', Variable.function, False, p[2], None, p[6])
 
 def p_statement_call_function(p):
-    'statement : VARIABLE LPAREN RPAREN SEMICOLON'    
+    'statement : VARIABLE LPAREN RPAREN SEMICOLON'
     p[0] = ('CALL_FUNCTION', p[1])
+    # p[0] = ('CALL_FUNCTION', p[1], p[3])
 
 # fix bugs
 def p_statement_arguments(p):
-    '''arguments : argument SEPARATOR argument
-                 | argument'''
+    'arguments : argument'
     for item in enumerate(p):
-        print('arguments', item)
-        
-    if len(p) is 4:
-        p[0] = (p[1], p[3])
-    else:
-        p[0] = (p[1])
+        print(item)
+
+    p[0] = p[1]
 
 def p_statement_argument(p):
-    '''argument : VARIABLE EQUALS expression
-                | VARIABLE'''
+    '''argument : argument SEPARATOR expression
+                | expression'''        
     if len(p) is 4:
-        p[0] = ('DEFAULT', p[1], p[3])
+        p[0] = (p[1], p[3])
     else:
         p[0] = (p[1])
 # fix bugs

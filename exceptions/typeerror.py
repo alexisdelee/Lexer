@@ -15,5 +15,9 @@ class PlyTypeError(PlyError):
                 return var
         raise PlyTypeError('this method wait a variable of type {0} instead of {1}'.format(datatypes[0], type(var)))
 
+    @staticmethod
+    def assignment():
+        return PlyTypeError('assignment to constant variable')
+
     def __str__(self):
         return 'TypeError: {0}'.format(self.message)

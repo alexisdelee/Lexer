@@ -7,7 +7,7 @@ class PlySyntaxError(PlyError):
 
     @staticmethod
     def undefined(var):
-        raise PlySyntaxError('undefined variable "{0}"'.format(var))
+        raise PlySyntaxError('"{0}" is not defined'.format(var))
 
     @staticmethod
     def defined(var):
