@@ -237,7 +237,7 @@ def p_statement_define_constant(p):
         p[0] = ('DEFINE', Variable.pointer | Variable.unknown, False, p[2], p[5])
 
 def p_statement_define_function(p):
-    '''statement : DEF VARIABLE LPAREN argument RPAREN DO block END
+    '''statement : DEF VARIABLE LPAREN dargument RPAREN DO block END
                  | DEF VARIABLE LPAREN RPAREN DO block END'''
     if len(p) is 9:
         p[0] = ('DEFINE', Variable.function, False, p[2], p[4], p[7])
@@ -245,7 +245,7 @@ def p_statement_define_function(p):
         p[0] = ('DEFINE', Variable.function, False, p[2], None, p[6])
 
 def p_statement_call_function(p):
-    '''statement : VARIABLE LPAREN argument RPAREN SEMICOLON
+    '''statement : VARIABLE LPAREN cargument RPAREN SEMICOLON
                  | VARIABLE LPAREN RPAREN SEMICOLON'''
     if len(p) is 6:
         p[0] = ('CALL_FUNCTION', p[1], p[3])
@@ -254,20 +254,26 @@ def p_statement_call_function(p):
 
 # fix bugs
 def p_statement_define_argument(p):
-    '''argument : argument SEPARATOR VARIABLE
-                | VARIABLE'''
+    '''dargument : dargument SEPARATOR VARIABLE
+                 | VARIABLE'''
     if len(p) is 4:
         p[0] = (p[1], p[3])
     else:
         p[0] = (p[1])
 
 def p_statement_call_argument(p):
-    '''argument : argument SEPARATOR expression
-                | expression'''
+    '''cargument : cargument SEPARATOR expression
+                 | expression'''
     if len(p) is 4:
-        p[0] = (p[1], p[3])
+        if type(p[1]) is tuple:
+            print('argument', list(p[1]) + [ p[3] ])
+            p[0] = tuple(list(p[1]) + [ p[3] ])
+        else:
+            print('argument', [ p[1] ] + [ p[3] ])
+            p[0] = tuple([ p[1] ] + [p[3]])
+        # p[0] = (p[1], p[3])
     else:
-        p[0] = (p[1])
+        p[0] = tuple([ p[1] ])
 # fix bugs
 
 def p_statement_delete(p):

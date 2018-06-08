@@ -24,14 +24,14 @@ Rule 14    statement -> VAR VARIABLE EQUALS expression SEMICOLON
 Rule 15    statement -> VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
 Rule 16    statement -> CONST VARIABLE EQUALS expression SEMICOLON
 Rule 17    statement -> CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-Rule 18    statement -> DEF VARIABLE LPAREN argument RPAREN DO block END
+Rule 18    statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END
 Rule 19    statement -> DEF VARIABLE LPAREN RPAREN DO block END
-Rule 20    statement -> VARIABLE LPAREN argument RPAREN SEMICOLON
+Rule 20    statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON
 Rule 21    statement -> VARIABLE LPAREN RPAREN SEMICOLON
-Rule 22    argument -> argument SEPARATOR VARIABLE
-Rule 23    argument -> VARIABLE
-Rule 24    argument -> argument SEPARATOR expression
-Rule 25    argument -> expression
+Rule 22    dargument -> dargument SEPARATOR VARIABLE
+Rule 23    dargument -> VARIABLE
+Rule 24    cargument -> cargument SEPARATOR expression
+Rule 25    cargument -> expression
 Rule 26    statement -> DELETE VARIABLE SEMICOLON
 Rule 27    statement -> expression SEMICOLON
 Rule 28    comparison -> expression INFERIOR expression
@@ -110,9 +110,10 @@ error                :
 
 Nonterminals, with rules where they appear
 
-argument             : 18 20 22 24
 block                : 1 2 4 5 5 6 7 18 19
+cargument            : 20 24
 comparison           : 4 5 7
+dargument            : 18 22
 expression           : 6 6 8 9 11 12 12 13 13 14 16 24 25 27 28 28 29 29 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 40 40 41 41 42 42 43 43 44 44 45 45 46 47 49 50 50 51 52
 scope                : 0
 statement            : 2 3
@@ -139,9 +140,9 @@ state 0
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -214,9 +215,9 @@ state 2
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -389,7 +390,7 @@ state 10
     (9) statement -> VARIABLE . EQUALS expression SEMICOLON
     (10) statement -> VARIABLE . EQUALS ADDRESS VARIABLE SEMICOLON
     (12) statement -> VARIABLE . LSQUARE expression RSQUARE EQUALS expression SEMICOLON
-    (20) statement -> VARIABLE . LPAREN argument RPAREN SEMICOLON
+    (20) statement -> VARIABLE . LPAREN cargument RPAREN SEMICOLON
     (21) statement -> VARIABLE . LPAREN RPAREN SEMICOLON
     (49) expression -> VARIABLE . LSQUARE expression RSQUARE
     (50) expression -> VARIABLE . LSQUARE expression COLON expression RSQUARE
@@ -442,7 +443,7 @@ state 13
 
 state 14
 
-    (18) statement -> DEF . VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> DEF . VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> DEF . VARIABLE LPAREN RPAREN DO block END
 
     VARIABLE        shift and go to state 46
@@ -1328,12 +1329,10 @@ state 41
 
 state 42
 
-    (20) statement -> VARIABLE LPAREN . argument RPAREN SEMICOLON
+    (20) statement -> VARIABLE LPAREN . cargument RPAREN SEMICOLON
     (21) statement -> VARIABLE LPAREN . RPAREN SEMICOLON
-    (22) argument -> . argument SEPARATOR VARIABLE
-    (23) argument -> . VARIABLE
-    (24) argument -> . argument SEPARATOR expression
-    (25) argument -> . expression
+    (24) cargument -> . cargument SEPARATOR expression
+    (25) cargument -> . expression
     (34) expression -> . expression PLUS expression
     (35) expression -> . expression MINUS expression
     (36) expression -> . expression TIMES expression
@@ -1358,24 +1357,24 @@ state 42
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    RPAREN          shift and go to state 75
-    VARIABLE        shift and go to state 73
+    RPAREN          shift and go to state 74
     MINUS           shift and go to state 16
     LPAREN          shift and go to state 5
     TYPEOF          shift and go to state 17
+    VARIABLE        shift and go to state 23
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    argument                       shift and go to state 74
-    expression                     shift and go to state 76
+    cargument                      shift and go to state 73
+    expression                     shift and go to state 75
 
 state 43
 
     (11) statement -> ADDRESS VARIABLE . EQUALS expression SEMICOLON
     (13) statement -> ADDRESS VARIABLE . LSQUARE expression RSQUARE EQUALS expression SEMICOLON
 
-    EQUALS          shift and go to state 77
-    LSQUARE         shift and go to state 78
+    EQUALS          shift and go to state 76
+    LSQUARE         shift and go to state 77
 
 
 state 44
@@ -1383,7 +1382,7 @@ state 44
     (14) statement -> VAR VARIABLE . EQUALS expression SEMICOLON
     (15) statement -> VAR VARIABLE . EQUALS ADDRESS VARIABLE SEMICOLON
 
-    EQUALS          shift and go to state 79
+    EQUALS          shift and go to state 78
 
 
 state 45
@@ -1391,22 +1390,22 @@ state 45
     (16) statement -> CONST VARIABLE . EQUALS expression SEMICOLON
     (17) statement -> CONST VARIABLE . EQUALS ADDRESS VARIABLE SEMICOLON
 
-    EQUALS          shift and go to state 80
+    EQUALS          shift and go to state 79
 
 
 state 46
 
-    (18) statement -> DEF VARIABLE . LPAREN argument RPAREN DO block END
+    (18) statement -> DEF VARIABLE . LPAREN dargument RPAREN DO block END
     (19) statement -> DEF VARIABLE . LPAREN RPAREN DO block END
 
-    LPAREN          shift and go to state 81
+    LPAREN          shift and go to state 80
 
 
 state 47
 
     (26) statement -> DELETE VARIABLE . SEMICOLON
 
-    SEMICOLON       shift and go to state 82
+    SEMICOLON       shift and go to state 81
 
 
 state 48
@@ -1462,7 +1461,7 @@ state 49
 
     (48) expression -> TYPEOF LPAREN . VARIABLE RPAREN
 
-    VARIABLE        shift and go to state 83
+    VARIABLE        shift and go to state 82
 
 
 state 50
@@ -1470,7 +1469,7 @@ state 50
     (4) statement -> IF LPAREN comparison . RPAREN THEN block END
     (5) statement -> IF LPAREN comparison . RPAREN THEN block ELSE block END
 
-    RPAREN          shift and go to state 84
+    RPAREN          shift and go to state 83
 
 
 state 51
@@ -1494,12 +1493,12 @@ state 51
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    INFERIOR        shift and go to state 85
-    INFERIOR_OR_EQUAL shift and go to state 86
-    SUPERIOR        shift and go to state 87
-    SUPERIOR_OR_EQUAL shift and go to state 88
-    DOUBLE_EQUALS   shift and go to state 89
-    DIFFERENT       shift and go to state 90
+    INFERIOR        shift and go to state 84
+    INFERIOR_OR_EQUAL shift and go to state 85
+    SUPERIOR        shift and go to state 86
+    SUPERIOR_OR_EQUAL shift and go to state 87
+    DOUBLE_EQUALS   shift and go to state 88
+    DIFFERENT       shift and go to state 89
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -1571,7 +1570,7 @@ state 53
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 91
+    expression                     shift and go to state 90
 
 state 54
 
@@ -1589,7 +1588,7 @@ state 54
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    TO              shift and go to state 92
+    TO              shift and go to state 91
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2268,7 +2267,7 @@ state 67
 
     (7) statement -> WHILE LPAREN comparison . RPAREN NEXT block END
 
-    RPAREN          shift and go to state 93
+    RPAREN          shift and go to state 92
 
 
 state 68
@@ -2287,7 +2286,7 @@ state 68
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    RPAREN          shift and go to state 94
+    RPAREN          shift and go to state 93
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2318,7 +2317,7 @@ state 69
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    SEMICOLON       shift and go to state 95
+    SEMICOLON       shift and go to state 94
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2337,7 +2336,7 @@ state 70
 
     (10) statement -> VARIABLE EQUALS ADDRESS . VARIABLE SEMICOLON
 
-    VARIABLE        shift and go to state 96
+    VARIABLE        shift and go to state 95
 
 
 state 71
@@ -2359,8 +2358,8 @@ state 71
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    RSQUARE         shift and go to state 97
-    COLON           shift and go to state 98
+    RSQUARE         shift and go to state 96
+    COLON           shift and go to state 97
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2403,7 +2402,7 @@ state 72
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    RSQUARE         shift and go to state 100
+    RSQUARE         shift and go to state 99
     MINUS           shift and go to state 16
     LPAREN          shift and go to state 5
     TYPEOF          shift and go to state 17
@@ -2411,60 +2410,27 @@ state 72
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 99
+    expression                     shift and go to state 98
 
 state 73
 
-    (23) argument -> VARIABLE .
-    (49) expression -> VARIABLE . LSQUARE expression RSQUARE
-    (50) expression -> VARIABLE . LSQUARE expression COLON expression RSQUARE
-    (51) expression -> VARIABLE . LSQUARE COLON expression RSQUARE
-    (52) expression -> VARIABLE . LSQUARE expression COLON RSQUARE
-    (53) expression -> VARIABLE . LSQUARE COLON RSQUARE
-    (56) expression -> VARIABLE .
+    (20) statement -> VARIABLE LPAREN cargument . RPAREN SEMICOLON
+    (24) cargument -> cargument . SEPARATOR expression
 
-  ! reduce/reduce conflict for RPAREN resolved using rule 23 (argument -> VARIABLE .)
-  ! reduce/reduce conflict for SEPARATOR resolved using rule 23 (argument -> VARIABLE .)
-    RPAREN          reduce using rule 23 (argument -> VARIABLE .)
-    SEPARATOR       reduce using rule 23 (argument -> VARIABLE .)
-    LSQUARE         shift and go to state 53
-    PLUS            reduce using rule 56 (expression -> VARIABLE .)
-    MINUS           reduce using rule 56 (expression -> VARIABLE .)
-    TIMES           reduce using rule 56 (expression -> VARIABLE .)
-    DIVIDE          reduce using rule 56 (expression -> VARIABLE .)
-    EXPONENT        reduce using rule 56 (expression -> VARIABLE .)
-    REMAINDER       reduce using rule 56 (expression -> VARIABLE .)
-    INFERIOR        reduce using rule 56 (expression -> VARIABLE .)
-    INFERIOR_OR_EQUAL reduce using rule 56 (expression -> VARIABLE .)
-    SUPERIOR        reduce using rule 56 (expression -> VARIABLE .)
-    SUPERIOR_OR_EQUAL reduce using rule 56 (expression -> VARIABLE .)
-    DOUBLE_EQUALS   reduce using rule 56 (expression -> VARIABLE .)
-    DIFFERENT       reduce using rule 56 (expression -> VARIABLE .)
-
-  ! RPAREN          [ reduce using rule 56 (expression -> VARIABLE .) ]
-  ! SEPARATOR       [ reduce using rule 56 (expression -> VARIABLE .) ]
+    RPAREN          shift and go to state 100
+    SEPARATOR       shift and go to state 101
 
 
 state 74
 
-    (20) statement -> VARIABLE LPAREN argument . RPAREN SEMICOLON
-    (22) argument -> argument . SEPARATOR VARIABLE
-    (24) argument -> argument . SEPARATOR expression
+    (21) statement -> VARIABLE LPAREN RPAREN . SEMICOLON
 
-    RPAREN          shift and go to state 101
-    SEPARATOR       shift and go to state 102
+    SEMICOLON       shift and go to state 102
 
 
 state 75
 
-    (21) statement -> VARIABLE LPAREN RPAREN . SEMICOLON
-
-    SEMICOLON       shift and go to state 103
-
-
-state 76
-
-    (25) argument -> expression .
+    (25) cargument -> expression .
     (34) expression -> expression . PLUS expression
     (35) expression -> expression . MINUS expression
     (36) expression -> expression . TIMES expression
@@ -2478,8 +2444,8 @@ state 76
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    RPAREN          reduce using rule 25 (argument -> expression .)
-    SEPARATOR       reduce using rule 25 (argument -> expression .)
+    RPAREN          reduce using rule 25 (cargument -> expression .)
+    SEPARATOR       reduce using rule 25 (cargument -> expression .)
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2494,9 +2460,45 @@ state 76
     DIFFERENT       shift and go to state 37
 
 
-state 77
+state 76
 
     (11) statement -> ADDRESS VARIABLE EQUALS . expression SEMICOLON
+    (34) expression -> . expression PLUS expression
+    (35) expression -> . expression MINUS expression
+    (36) expression -> . expression TIMES expression
+    (37) expression -> . expression DIVIDE expression
+    (38) expression -> . expression EXPONENT expression
+    (39) expression -> . expression REMAINDER expression
+    (40) expression -> . expression INFERIOR expression
+    (41) expression -> . expression INFERIOR_OR_EQUAL expression
+    (42) expression -> . expression SUPERIOR expression
+    (43) expression -> . expression SUPERIOR_OR_EQUAL expression
+    (44) expression -> . expression DOUBLE_EQUALS expression
+    (45) expression -> . expression DIFFERENT expression
+    (46) expression -> . MINUS expression
+    (47) expression -> . LPAREN expression RPAREN
+    (48) expression -> . TYPEOF LPAREN VARIABLE RPAREN
+    (49) expression -> . VARIABLE LSQUARE expression RSQUARE
+    (50) expression -> . VARIABLE LSQUARE expression COLON expression RSQUARE
+    (51) expression -> . VARIABLE LSQUARE COLON expression RSQUARE
+    (52) expression -> . VARIABLE LSQUARE expression COLON RSQUARE
+    (53) expression -> . VARIABLE LSQUARE COLON RSQUARE
+    (54) expression -> . NUMBER
+    (55) expression -> . STRING
+    (56) expression -> . VARIABLE
+
+    MINUS           shift and go to state 16
+    LPAREN          shift and go to state 5
+    TYPEOF          shift and go to state 17
+    VARIABLE        shift and go to state 23
+    NUMBER          shift and go to state 18
+    STRING          shift and go to state 19
+
+    expression                     shift and go to state 103
+
+state 77
+
+    (13) statement -> ADDRESS VARIABLE LSQUARE . expression RSQUARE EQUALS expression SEMICOLON
     (34) expression -> . expression PLUS expression
     (35) expression -> . expression MINUS expression
     (36) expression -> . expression TIMES expression
@@ -2532,42 +2534,6 @@ state 77
 
 state 78
 
-    (13) statement -> ADDRESS VARIABLE LSQUARE . expression RSQUARE EQUALS expression SEMICOLON
-    (34) expression -> . expression PLUS expression
-    (35) expression -> . expression MINUS expression
-    (36) expression -> . expression TIMES expression
-    (37) expression -> . expression DIVIDE expression
-    (38) expression -> . expression EXPONENT expression
-    (39) expression -> . expression REMAINDER expression
-    (40) expression -> . expression INFERIOR expression
-    (41) expression -> . expression INFERIOR_OR_EQUAL expression
-    (42) expression -> . expression SUPERIOR expression
-    (43) expression -> . expression SUPERIOR_OR_EQUAL expression
-    (44) expression -> . expression DOUBLE_EQUALS expression
-    (45) expression -> . expression DIFFERENT expression
-    (46) expression -> . MINUS expression
-    (47) expression -> . LPAREN expression RPAREN
-    (48) expression -> . TYPEOF LPAREN VARIABLE RPAREN
-    (49) expression -> . VARIABLE LSQUARE expression RSQUARE
-    (50) expression -> . VARIABLE LSQUARE expression COLON expression RSQUARE
-    (51) expression -> . VARIABLE LSQUARE COLON expression RSQUARE
-    (52) expression -> . VARIABLE LSQUARE expression COLON RSQUARE
-    (53) expression -> . VARIABLE LSQUARE COLON RSQUARE
-    (54) expression -> . NUMBER
-    (55) expression -> . STRING
-    (56) expression -> . VARIABLE
-
-    MINUS           shift and go to state 16
-    LPAREN          shift and go to state 5
-    TYPEOF          shift and go to state 17
-    VARIABLE        shift and go to state 23
-    NUMBER          shift and go to state 18
-    STRING          shift and go to state 19
-
-    expression                     shift and go to state 105
-
-state 79
-
     (14) statement -> VAR VARIABLE EQUALS . expression SEMICOLON
     (15) statement -> VAR VARIABLE EQUALS . ADDRESS VARIABLE SEMICOLON
     (34) expression -> . expression PLUS expression
@@ -2594,7 +2560,7 @@ state 79
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    ADDRESS         shift and go to state 107
+    ADDRESS         shift and go to state 106
     MINUS           shift and go to state 16
     LPAREN          shift and go to state 5
     TYPEOF          shift and go to state 17
@@ -2602,9 +2568,9 @@ state 79
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 106
+    expression                     shift and go to state 105
 
-state 80
+state 79
 
     (16) statement -> CONST VARIABLE EQUALS . expression SEMICOLON
     (17) statement -> CONST VARIABLE EQUALS . ADDRESS VARIABLE SEMICOLON
@@ -2632,7 +2598,7 @@ state 80
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    ADDRESS         shift and go to state 109
+    ADDRESS         shift and go to state 108
     MINUS           shift and go to state 16
     LPAREN          shift and go to state 5
     TYPEOF          shift and go to state 17
@@ -2640,52 +2606,21 @@ state 80
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 108
+    expression                     shift and go to state 107
 
-state 81
+state 80
 
-    (18) statement -> DEF VARIABLE LPAREN . argument RPAREN DO block END
+    (18) statement -> DEF VARIABLE LPAREN . dargument RPAREN DO block END
     (19) statement -> DEF VARIABLE LPAREN . RPAREN DO block END
-    (22) argument -> . argument SEPARATOR VARIABLE
-    (23) argument -> . VARIABLE
-    (24) argument -> . argument SEPARATOR expression
-    (25) argument -> . expression
-    (34) expression -> . expression PLUS expression
-    (35) expression -> . expression MINUS expression
-    (36) expression -> . expression TIMES expression
-    (37) expression -> . expression DIVIDE expression
-    (38) expression -> . expression EXPONENT expression
-    (39) expression -> . expression REMAINDER expression
-    (40) expression -> . expression INFERIOR expression
-    (41) expression -> . expression INFERIOR_OR_EQUAL expression
-    (42) expression -> . expression SUPERIOR expression
-    (43) expression -> . expression SUPERIOR_OR_EQUAL expression
-    (44) expression -> . expression DOUBLE_EQUALS expression
-    (45) expression -> . expression DIFFERENT expression
-    (46) expression -> . MINUS expression
-    (47) expression -> . LPAREN expression RPAREN
-    (48) expression -> . TYPEOF LPAREN VARIABLE RPAREN
-    (49) expression -> . VARIABLE LSQUARE expression RSQUARE
-    (50) expression -> . VARIABLE LSQUARE expression COLON expression RSQUARE
-    (51) expression -> . VARIABLE LSQUARE COLON expression RSQUARE
-    (52) expression -> . VARIABLE LSQUARE expression COLON RSQUARE
-    (53) expression -> . VARIABLE LSQUARE COLON RSQUARE
-    (54) expression -> . NUMBER
-    (55) expression -> . STRING
-    (56) expression -> . VARIABLE
+    (22) dargument -> . dargument SEPARATOR VARIABLE
+    (23) dargument -> . VARIABLE
 
     RPAREN          shift and go to state 111
-    VARIABLE        shift and go to state 73
-    MINUS           shift and go to state 16
-    LPAREN          shift and go to state 5
-    TYPEOF          shift and go to state 17
-    NUMBER          shift and go to state 18
-    STRING          shift and go to state 19
+    VARIABLE        shift and go to state 109
 
-    argument                       shift and go to state 110
-    expression                     shift and go to state 76
+    dargument                      shift and go to state 110
 
-state 82
+state 81
 
     (26) statement -> DELETE VARIABLE SEMICOLON .
 
@@ -2709,14 +2644,14 @@ state 82
     ELSE            reduce using rule 26 (statement -> DELETE VARIABLE SEMICOLON .)
 
 
-state 83
+state 82
 
     (48) expression -> TYPEOF LPAREN VARIABLE . RPAREN
 
     RPAREN          shift and go to state 112
 
 
-state 84
+state 83
 
     (4) statement -> IF LPAREN comparison RPAREN . THEN block END
     (5) statement -> IF LPAREN comparison RPAREN . THEN block ELSE block END
@@ -2724,7 +2659,7 @@ state 84
     THEN            shift and go to state 113
 
 
-state 85
+state 84
 
     (28) comparison -> expression INFERIOR . expression
     (40) expression -> expression INFERIOR . expression
@@ -2761,7 +2696,7 @@ state 85
 
     expression                     shift and go to state 114
 
-state 86
+state 85
 
     (29) comparison -> expression INFERIOR_OR_EQUAL . expression
     (41) expression -> expression INFERIOR_OR_EQUAL . expression
@@ -2798,7 +2733,7 @@ state 86
 
     expression                     shift and go to state 115
 
-state 87
+state 86
 
     (30) comparison -> expression SUPERIOR . expression
     (42) expression -> expression SUPERIOR . expression
@@ -2835,7 +2770,7 @@ state 87
 
     expression                     shift and go to state 116
 
-state 88
+state 87
 
     (31) comparison -> expression SUPERIOR_OR_EQUAL . expression
     (43) expression -> expression SUPERIOR_OR_EQUAL . expression
@@ -2872,7 +2807,7 @@ state 88
 
     expression                     shift and go to state 117
 
-state 89
+state 88
 
     (32) comparison -> expression DOUBLE_EQUALS . expression
     (44) expression -> expression DOUBLE_EQUALS . expression
@@ -2909,7 +2844,7 @@ state 89
 
     expression                     shift and go to state 118
 
-state 90
+state 89
 
     (33) comparison -> expression DIFFERENT . expression
     (45) expression -> expression DIFFERENT . expression
@@ -2946,7 +2881,7 @@ state 90
 
     expression                     shift and go to state 119
 
-state 91
+state 90
 
     (49) expression -> VARIABLE LSQUARE expression . RSQUARE
     (50) expression -> VARIABLE LSQUARE expression . COLON expression RSQUARE
@@ -2965,7 +2900,7 @@ state 91
     (45) expression -> expression . DIFFERENT expression
 
     RSQUARE         shift and go to state 120
-    COLON           shift and go to state 98
+    COLON           shift and go to state 97
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -2980,7 +2915,7 @@ state 91
     DIFFERENT       shift and go to state 37
 
 
-state 92
+state 91
 
     (6) statement -> FOR LPAREN expression TO . expression RPAREN NEXT block END
     (34) expression -> . expression PLUS expression
@@ -3016,21 +2951,21 @@ state 92
 
     expression                     shift and go to state 121
 
-state 93
+state 92
 
     (7) statement -> WHILE LPAREN comparison RPAREN . NEXT block END
 
     NEXT            shift and go to state 122
 
 
-state 94
+state 93
 
     (8) statement -> PRINT LPAREN expression RPAREN . SEMICOLON
 
     SEMICOLON       shift and go to state 123
 
 
-state 95
+state 94
 
     (9) statement -> VARIABLE EQUALS expression SEMICOLON .
 
@@ -3054,14 +2989,14 @@ state 95
     ELSE            reduce using rule 9 (statement -> VARIABLE EQUALS expression SEMICOLON .)
 
 
-state 96
+state 95
 
     (10) statement -> VARIABLE EQUALS ADDRESS VARIABLE . SEMICOLON
 
     SEMICOLON       shift and go to state 124
 
 
-state 97
+state 96
 
     (12) statement -> VARIABLE LSQUARE expression RSQUARE . EQUALS expression SEMICOLON
     (49) expression -> VARIABLE LSQUARE expression RSQUARE .
@@ -3082,7 +3017,7 @@ state 97
     DIFFERENT       reduce using rule 49 (expression -> VARIABLE LSQUARE expression RSQUARE .)
 
 
-state 98
+state 97
 
     (50) expression -> VARIABLE LSQUARE expression COLON . expression RSQUARE
     (52) expression -> VARIABLE LSQUARE expression COLON . RSQUARE
@@ -3120,7 +3055,7 @@ state 98
 
     expression                     shift and go to state 126
 
-state 99
+state 98
 
     (51) expression -> VARIABLE LSQUARE COLON expression . RSQUARE
     (34) expression -> expression . PLUS expression
@@ -3151,7 +3086,7 @@ state 99
     DIFFERENT       shift and go to state 37
 
 
-state 100
+state 99
 
     (53) expression -> VARIABLE LSQUARE COLON RSQUARE .
 
@@ -3175,17 +3110,16 @@ state 100
     SEPARATOR       reduce using rule 53 (expression -> VARIABLE LSQUARE COLON RSQUARE .)
 
 
-state 101
+state 100
 
-    (20) statement -> VARIABLE LPAREN argument RPAREN . SEMICOLON
+    (20) statement -> VARIABLE LPAREN cargument RPAREN . SEMICOLON
 
     SEMICOLON       shift and go to state 129
 
 
-state 102
+state 101
 
-    (22) argument -> argument SEPARATOR . VARIABLE
-    (24) argument -> argument SEPARATOR . expression
+    (24) cargument -> cargument SEPARATOR . expression
     (34) expression -> . expression PLUS expression
     (35) expression -> . expression MINUS expression
     (36) expression -> . expression TIMES expression
@@ -3210,16 +3144,16 @@ state 102
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    VARIABLE        shift and go to state 130
     MINUS           shift and go to state 16
     LPAREN          shift and go to state 5
     TYPEOF          shift and go to state 17
+    VARIABLE        shift and go to state 23
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 131
+    expression                     shift and go to state 130
 
-state 103
+state 102
 
     (21) statement -> VARIABLE LPAREN RPAREN SEMICOLON .
 
@@ -3243,7 +3177,7 @@ state 103
     ELSE            reduce using rule 21 (statement -> VARIABLE LPAREN RPAREN SEMICOLON .)
 
 
-state 104
+state 103
 
     (11) statement -> ADDRESS VARIABLE EQUALS expression . SEMICOLON
     (34) expression -> expression . PLUS expression
@@ -3259,7 +3193,38 @@ state 104
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    SEMICOLON       shift and go to state 132
+    SEMICOLON       shift and go to state 131
+    PLUS            shift and go to state 26
+    MINUS           shift and go to state 27
+    TIMES           shift and go to state 28
+    DIVIDE          shift and go to state 29
+    EXPONENT        shift and go to state 30
+    REMAINDER       shift and go to state 31
+    INFERIOR        shift and go to state 32
+    INFERIOR_OR_EQUAL shift and go to state 33
+    SUPERIOR        shift and go to state 34
+    SUPERIOR_OR_EQUAL shift and go to state 35
+    DOUBLE_EQUALS   shift and go to state 36
+    DIFFERENT       shift and go to state 37
+
+
+state 104
+
+    (13) statement -> ADDRESS VARIABLE LSQUARE expression . RSQUARE EQUALS expression SEMICOLON
+    (34) expression -> expression . PLUS expression
+    (35) expression -> expression . MINUS expression
+    (36) expression -> expression . TIMES expression
+    (37) expression -> expression . DIVIDE expression
+    (38) expression -> expression . EXPONENT expression
+    (39) expression -> expression . REMAINDER expression
+    (40) expression -> expression . INFERIOR expression
+    (41) expression -> expression . INFERIOR_OR_EQUAL expression
+    (42) expression -> expression . SUPERIOR expression
+    (43) expression -> expression . SUPERIOR_OR_EQUAL expression
+    (44) expression -> expression . DOUBLE_EQUALS expression
+    (45) expression -> expression . DIFFERENT expression
+
+    RSQUARE         shift and go to state 132
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -3276,7 +3241,7 @@ state 104
 
 state 105
 
-    (13) statement -> ADDRESS VARIABLE LSQUARE expression . RSQUARE EQUALS expression SEMICOLON
+    (14) statement -> VAR VARIABLE EQUALS expression . SEMICOLON
     (34) expression -> expression . PLUS expression
     (35) expression -> expression . MINUS expression
     (36) expression -> expression . TIMES expression
@@ -3290,7 +3255,7 @@ state 105
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    RSQUARE         shift and go to state 133
+    SEMICOLON       shift and go to state 133
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -3307,43 +3272,12 @@ state 105
 
 state 106
 
-    (14) statement -> VAR VARIABLE EQUALS expression . SEMICOLON
-    (34) expression -> expression . PLUS expression
-    (35) expression -> expression . MINUS expression
-    (36) expression -> expression . TIMES expression
-    (37) expression -> expression . DIVIDE expression
-    (38) expression -> expression . EXPONENT expression
-    (39) expression -> expression . REMAINDER expression
-    (40) expression -> expression . INFERIOR expression
-    (41) expression -> expression . INFERIOR_OR_EQUAL expression
-    (42) expression -> expression . SUPERIOR expression
-    (43) expression -> expression . SUPERIOR_OR_EQUAL expression
-    (44) expression -> expression . DOUBLE_EQUALS expression
-    (45) expression -> expression . DIFFERENT expression
+    (15) statement -> VAR VARIABLE EQUALS ADDRESS . VARIABLE SEMICOLON
 
-    SEMICOLON       shift and go to state 134
-    PLUS            shift and go to state 26
-    MINUS           shift and go to state 27
-    TIMES           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    EXPONENT        shift and go to state 30
-    REMAINDER       shift and go to state 31
-    INFERIOR        shift and go to state 32
-    INFERIOR_OR_EQUAL shift and go to state 33
-    SUPERIOR        shift and go to state 34
-    SUPERIOR_OR_EQUAL shift and go to state 35
-    DOUBLE_EQUALS   shift and go to state 36
-    DIFFERENT       shift and go to state 37
+    VARIABLE        shift and go to state 134
 
 
 state 107
-
-    (15) statement -> VAR VARIABLE EQUALS ADDRESS . VARIABLE SEMICOLON
-
-    VARIABLE        shift and go to state 135
-
-
-state 108
 
     (16) statement -> CONST VARIABLE EQUALS expression . SEMICOLON
     (34) expression -> expression . PLUS expression
@@ -3359,7 +3293,7 @@ state 108
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    SEMICOLON       shift and go to state 136
+    SEMICOLON       shift and go to state 135
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -3374,21 +3308,28 @@ state 108
     DIFFERENT       shift and go to state 37
 
 
-state 109
+state 108
 
     (17) statement -> CONST VARIABLE EQUALS ADDRESS . VARIABLE SEMICOLON
 
-    VARIABLE        shift and go to state 137
+    VARIABLE        shift and go to state 136
+
+
+state 109
+
+    (23) dargument -> VARIABLE .
+
+    RPAREN          reduce using rule 23 (dargument -> VARIABLE .)
+    SEPARATOR       reduce using rule 23 (dargument -> VARIABLE .)
 
 
 state 110
 
-    (18) statement -> DEF VARIABLE LPAREN argument . RPAREN DO block END
-    (22) argument -> argument . SEPARATOR VARIABLE
-    (24) argument -> argument . SEPARATOR expression
+    (18) statement -> DEF VARIABLE LPAREN dargument . RPAREN DO block END
+    (22) dargument -> dargument . SEPARATOR VARIABLE
 
-    RPAREN          shift and go to state 138
-    SEPARATOR       shift and go to state 102
+    RPAREN          shift and go to state 137
+    SEPARATOR       shift and go to state 138
 
 
 state 111
@@ -3442,9 +3383,9 @@ state 113
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -3908,9 +3849,9 @@ state 122
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4123,63 +4064,31 @@ state 128
 
 state 129
 
-    (20) statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .
+    (20) statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .
 
-    IF              reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    FOR             reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    WHILE           reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    PRINT           reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    VARIABLE        reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    ADDRESS         reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    VAR             reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    CONST           reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    DEF             reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    DELETE          reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    MINUS           reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    LPAREN          reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    TYPEOF          reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    NUMBER          reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    STRING          reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    $end            reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    END             reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
-    ELSE            reduce using rule 20 (statement -> VARIABLE LPAREN argument RPAREN SEMICOLON .)
+    IF              reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    FOR             reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    WHILE           reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    PRINT           reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    VARIABLE        reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    ADDRESS         reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    VAR             reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    CONST           reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    DEF             reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    DELETE          reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    MINUS           reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    LPAREN          reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    TYPEOF          reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    NUMBER          reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    STRING          reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    $end            reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    END             reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
+    ELSE            reduce using rule 20 (statement -> VARIABLE LPAREN cargument RPAREN SEMICOLON .)
 
 
 state 130
 
-    (22) argument -> argument SEPARATOR VARIABLE .
-    (49) expression -> VARIABLE . LSQUARE expression RSQUARE
-    (50) expression -> VARIABLE . LSQUARE expression COLON expression RSQUARE
-    (51) expression -> VARIABLE . LSQUARE COLON expression RSQUARE
-    (52) expression -> VARIABLE . LSQUARE expression COLON RSQUARE
-    (53) expression -> VARIABLE . LSQUARE COLON RSQUARE
-    (56) expression -> VARIABLE .
-
-  ! reduce/reduce conflict for RPAREN resolved using rule 22 (argument -> argument SEPARATOR VARIABLE .)
-  ! reduce/reduce conflict for SEPARATOR resolved using rule 22 (argument -> argument SEPARATOR VARIABLE .)
-    RPAREN          reduce using rule 22 (argument -> argument SEPARATOR VARIABLE .)
-    SEPARATOR       reduce using rule 22 (argument -> argument SEPARATOR VARIABLE .)
-    LSQUARE         shift and go to state 53
-    PLUS            reduce using rule 56 (expression -> VARIABLE .)
-    MINUS           reduce using rule 56 (expression -> VARIABLE .)
-    TIMES           reduce using rule 56 (expression -> VARIABLE .)
-    DIVIDE          reduce using rule 56 (expression -> VARIABLE .)
-    EXPONENT        reduce using rule 56 (expression -> VARIABLE .)
-    REMAINDER       reduce using rule 56 (expression -> VARIABLE .)
-    INFERIOR        reduce using rule 56 (expression -> VARIABLE .)
-    INFERIOR_OR_EQUAL reduce using rule 56 (expression -> VARIABLE .)
-    SUPERIOR        reduce using rule 56 (expression -> VARIABLE .)
-    SUPERIOR_OR_EQUAL reduce using rule 56 (expression -> VARIABLE .)
-    DOUBLE_EQUALS   reduce using rule 56 (expression -> VARIABLE .)
-    DIFFERENT       reduce using rule 56 (expression -> VARIABLE .)
-
-  ! RPAREN          [ reduce using rule 56 (expression -> VARIABLE .) ]
-  ! SEPARATOR       [ reduce using rule 56 (expression -> VARIABLE .) ]
-
-
-state 131
-
-    (24) argument -> argument SEPARATOR expression .
+    (24) cargument -> cargument SEPARATOR expression .
     (34) expression -> expression . PLUS expression
     (35) expression -> expression . MINUS expression
     (36) expression -> expression . TIMES expression
@@ -4193,8 +4102,8 @@ state 131
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    RPAREN          reduce using rule 24 (argument -> argument SEPARATOR expression .)
-    SEPARATOR       reduce using rule 24 (argument -> argument SEPARATOR expression .)
+    RPAREN          reduce using rule 24 (cargument -> cargument SEPARATOR expression .)
+    SEPARATOR       reduce using rule 24 (cargument -> cargument SEPARATOR expression .)
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -4209,7 +4118,7 @@ state 131
     DIFFERENT       shift and go to state 37
 
 
-state 132
+state 131
 
     (11) statement -> ADDRESS VARIABLE EQUALS expression SEMICOLON .
 
@@ -4233,14 +4142,14 @@ state 132
     ELSE            reduce using rule 11 (statement -> ADDRESS VARIABLE EQUALS expression SEMICOLON .)
 
 
-state 133
+state 132
 
     (13) statement -> ADDRESS VARIABLE LSQUARE expression RSQUARE . EQUALS expression SEMICOLON
 
     EQUALS          shift and go to state 145
 
 
-state 134
+state 133
 
     (14) statement -> VAR VARIABLE EQUALS expression SEMICOLON .
 
@@ -4264,14 +4173,14 @@ state 134
     ELSE            reduce using rule 14 (statement -> VAR VARIABLE EQUALS expression SEMICOLON .)
 
 
-state 135
+state 134
 
     (15) statement -> VAR VARIABLE EQUALS ADDRESS VARIABLE . SEMICOLON
 
     SEMICOLON       shift and go to state 146
 
 
-state 136
+state 135
 
     (16) statement -> CONST VARIABLE EQUALS expression SEMICOLON .
 
@@ -4295,18 +4204,25 @@ state 136
     ELSE            reduce using rule 16 (statement -> CONST VARIABLE EQUALS expression SEMICOLON .)
 
 
-state 137
+state 136
 
     (17) statement -> CONST VARIABLE EQUALS ADDRESS VARIABLE . SEMICOLON
 
     SEMICOLON       shift and go to state 147
 
 
-state 138
+state 137
 
-    (18) statement -> DEF VARIABLE LPAREN argument RPAREN . DO block END
+    (18) statement -> DEF VARIABLE LPAREN dargument RPAREN . DO block END
 
     DO              shift and go to state 148
+
+
+state 138
+
+    (22) dargument -> dargument SEPARATOR . VARIABLE
+
+    VARIABLE        shift and go to state 149
 
 
 state 139
@@ -4328,9 +4244,9 @@ state 139
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4374,7 +4290,7 @@ state 139
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    block                          shift and go to state 149
+    block                          shift and go to state 150
     statement                      shift and go to state 3
     expression                     shift and go to state 7
 
@@ -4397,9 +4313,9 @@ state 140
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4427,8 +4343,8 @@ state 140
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    END             shift and go to state 150
-    ELSE            shift and go to state 151
+    END             shift and go to state 151
+    ELSE            shift and go to state 152
     IF              shift and go to state 4
     FOR             shift and go to state 6
     WHILE           shift and go to state 8
@@ -4452,7 +4368,7 @@ state 141
 
     (6) statement -> FOR LPAREN expression TO expression RPAREN . NEXT block END
 
-    NEXT            shift and go to state 152
+    NEXT            shift and go to state 153
 
 
 state 142
@@ -4473,9 +4389,9 @@ state 142
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4503,7 +4419,7 @@ state 142
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    END             shift and go to state 153
+    END             shift and go to state 154
     IF              shift and go to state 4
     FOR             shift and go to state 6
     WHILE           shift and go to state 8
@@ -4539,7 +4455,7 @@ state 143
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    SEMICOLON       shift and go to state 154
+    SEMICOLON       shift and go to state 155
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -4612,7 +4528,7 @@ state 145
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    expression                     shift and go to state 155
+    expression                     shift and go to state 156
 
 state 146
 
@@ -4664,7 +4580,7 @@ state 147
 
 state 148
 
-    (18) statement -> DEF VARIABLE LPAREN argument RPAREN DO . block END
+    (18) statement -> DEF VARIABLE LPAREN dargument RPAREN DO . block END
     (2) block -> . block statement
     (3) block -> . statement
     (4) statement -> . IF LPAREN comparison RPAREN THEN block END
@@ -4681,9 +4597,9 @@ state 148
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4727,11 +4643,19 @@ state 148
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    block                          shift and go to state 156
+    block                          shift and go to state 157
     statement                      shift and go to state 3
     expression                     shift and go to state 7
 
 state 149
+
+    (22) dargument -> dargument SEPARATOR VARIABLE .
+
+    RPAREN          reduce using rule 22 (dargument -> dargument SEPARATOR VARIABLE .)
+    SEPARATOR       reduce using rule 22 (dargument -> dargument SEPARATOR VARIABLE .)
+
+
+state 150
 
     (19) statement -> DEF VARIABLE LPAREN RPAREN DO block . END
     (2) block -> block . statement
@@ -4749,9 +4673,9 @@ state 149
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4779,7 +4703,7 @@ state 149
     (55) expression -> . STRING
     (56) expression -> . VARIABLE
 
-    END             shift and go to state 157
+    END             shift and go to state 158
     IF              shift and go to state 4
     FOR             shift and go to state 6
     WHILE           shift and go to state 8
@@ -4799,7 +4723,7 @@ state 149
     statement                      shift and go to state 20
     expression                     shift and go to state 7
 
-state 150
+state 151
 
     (4) statement -> IF LPAREN comparison RPAREN THEN block END .
 
@@ -4823,7 +4747,7 @@ state 150
     ELSE            reduce using rule 4 (statement -> IF LPAREN comparison RPAREN THEN block END .)
 
 
-state 151
+state 152
 
     (5) statement -> IF LPAREN comparison RPAREN THEN block ELSE . block END
     (2) block -> . block statement
@@ -4842,9 +4766,9 @@ state 151
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4888,11 +4812,11 @@ state 151
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
-    block                          shift and go to state 158
+    block                          shift and go to state 159
     statement                      shift and go to state 3
     expression                     shift and go to state 7
 
-state 152
+state 153
 
     (6) statement -> FOR LPAREN expression TO expression RPAREN NEXT . block END
     (2) block -> . block statement
@@ -4911,9 +4835,9 @@ state 152
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -4958,10 +4882,10 @@ state 152
     STRING          shift and go to state 19
 
     expression                     shift and go to state 7
-    block                          shift and go to state 159
+    block                          shift and go to state 160
     statement                      shift and go to state 3
 
-state 153
+state 154
 
     (7) statement -> WHILE LPAREN comparison RPAREN NEXT block END .
 
@@ -4985,7 +4909,7 @@ state 153
     ELSE            reduce using rule 7 (statement -> WHILE LPAREN comparison RPAREN NEXT block END .)
 
 
-state 154
+state 155
 
     (12) statement -> VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON .
 
@@ -5009,7 +4933,7 @@ state 154
     ELSE            reduce using rule 12 (statement -> VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON .)
 
 
-state 155
+state 156
 
     (13) statement -> ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression . SEMICOLON
     (34) expression -> expression . PLUS expression
@@ -5025,7 +4949,7 @@ state 155
     (44) expression -> expression . DOUBLE_EQUALS expression
     (45) expression -> expression . DIFFERENT expression
 
-    SEMICOLON       shift and go to state 160
+    SEMICOLON       shift and go to state 161
     PLUS            shift and go to state 26
     MINUS           shift and go to state 27
     TIMES           shift and go to state 28
@@ -5040,101 +4964,9 @@ state 155
     DIFFERENT       shift and go to state 37
 
 
-state 156
-
-    (18) statement -> DEF VARIABLE LPAREN argument RPAREN DO block . END
-    (2) block -> block . statement
-    (4) statement -> . IF LPAREN comparison RPAREN THEN block END
-    (5) statement -> . IF LPAREN comparison RPAREN THEN block ELSE block END
-    (6) statement -> . FOR LPAREN expression TO expression RPAREN NEXT block END
-    (7) statement -> . WHILE LPAREN comparison RPAREN NEXT block END
-    (8) statement -> . PRINT LPAREN expression RPAREN SEMICOLON
-    (9) statement -> . VARIABLE EQUALS expression SEMICOLON
-    (10) statement -> . VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (11) statement -> . ADDRESS VARIABLE EQUALS expression SEMICOLON
-    (12) statement -> . VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
-    (13) statement -> . ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
-    (14) statement -> . VAR VARIABLE EQUALS expression SEMICOLON
-    (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
-    (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
-    (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
-    (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
-    (26) statement -> . DELETE VARIABLE SEMICOLON
-    (27) statement -> . expression SEMICOLON
-    (34) expression -> . expression PLUS expression
-    (35) expression -> . expression MINUS expression
-    (36) expression -> . expression TIMES expression
-    (37) expression -> . expression DIVIDE expression
-    (38) expression -> . expression EXPONENT expression
-    (39) expression -> . expression REMAINDER expression
-    (40) expression -> . expression INFERIOR expression
-    (41) expression -> . expression INFERIOR_OR_EQUAL expression
-    (42) expression -> . expression SUPERIOR expression
-    (43) expression -> . expression SUPERIOR_OR_EQUAL expression
-    (44) expression -> . expression DOUBLE_EQUALS expression
-    (45) expression -> . expression DIFFERENT expression
-    (46) expression -> . MINUS expression
-    (47) expression -> . LPAREN expression RPAREN
-    (48) expression -> . TYPEOF LPAREN VARIABLE RPAREN
-    (49) expression -> . VARIABLE LSQUARE expression RSQUARE
-    (50) expression -> . VARIABLE LSQUARE expression COLON expression RSQUARE
-    (51) expression -> . VARIABLE LSQUARE COLON expression RSQUARE
-    (52) expression -> . VARIABLE LSQUARE expression COLON RSQUARE
-    (53) expression -> . VARIABLE LSQUARE COLON RSQUARE
-    (54) expression -> . NUMBER
-    (55) expression -> . STRING
-    (56) expression -> . VARIABLE
-
-    END             shift and go to state 161
-    IF              shift and go to state 4
-    FOR             shift and go to state 6
-    WHILE           shift and go to state 8
-    PRINT           shift and go to state 9
-    VARIABLE        shift and go to state 10
-    ADDRESS         shift and go to state 11
-    VAR             shift and go to state 12
-    CONST           shift and go to state 13
-    DEF             shift and go to state 14
-    DELETE          shift and go to state 15
-    MINUS           shift and go to state 16
-    LPAREN          shift and go to state 5
-    TYPEOF          shift and go to state 17
-    NUMBER          shift and go to state 18
-    STRING          shift and go to state 19
-
-    statement                      shift and go to state 20
-    expression                     shift and go to state 7
-
 state 157
 
-    (19) statement -> DEF VARIABLE LPAREN RPAREN DO block END .
-
-    IF              reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    FOR             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    WHILE           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    PRINT           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    VARIABLE        reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    ADDRESS         reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    VAR             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    CONST           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    DEF             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    DELETE          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    MINUS           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    LPAREN          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    TYPEOF          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    NUMBER          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    STRING          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    $end            reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    END             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-    ELSE            reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
-
-
-state 158
-
-    (5) statement -> IF LPAREN comparison RPAREN THEN block ELSE block . END
+    (18) statement -> DEF VARIABLE LPAREN dargument RPAREN DO block . END
     (2) block -> block . statement
     (4) statement -> . IF LPAREN comparison RPAREN THEN block END
     (5) statement -> . IF LPAREN comparison RPAREN THEN block ELSE block END
@@ -5150,9 +4982,9 @@ state 158
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -5200,9 +5032,33 @@ state 158
     statement                      shift and go to state 20
     expression                     shift and go to state 7
 
+state 158
+
+    (19) statement -> DEF VARIABLE LPAREN RPAREN DO block END .
+
+    IF              reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    FOR             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    WHILE           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    PRINT           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    VARIABLE        reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    ADDRESS         reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    VAR             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    CONST           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    DEF             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    DELETE          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    MINUS           reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    LPAREN          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    TYPEOF          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    NUMBER          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    STRING          reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    $end            reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    END             reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+    ELSE            reduce using rule 19 (statement -> DEF VARIABLE LPAREN RPAREN DO block END .)
+
+
 state 159
 
-    (6) statement -> FOR LPAREN expression TO expression RPAREN NEXT block . END
+    (5) statement -> IF LPAREN comparison RPAREN THEN block ELSE block . END
     (2) block -> block . statement
     (4) statement -> . IF LPAREN comparison RPAREN THEN block END
     (5) statement -> . IF LPAREN comparison RPAREN THEN block ELSE block END
@@ -5218,9 +5074,9 @@ state 159
     (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
     (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
     (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
-    (18) statement -> . DEF VARIABLE LPAREN argument RPAREN DO block END
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
     (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
-    (20) statement -> . VARIABLE LPAREN argument RPAREN SEMICOLON
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
     (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
     (26) statement -> . DELETE VARIABLE SEMICOLON
     (27) statement -> . expression SEMICOLON
@@ -5265,10 +5121,78 @@ state 159
     NUMBER          shift and go to state 18
     STRING          shift and go to state 19
 
+    statement                      shift and go to state 20
+    expression                     shift and go to state 7
+
+state 160
+
+    (6) statement -> FOR LPAREN expression TO expression RPAREN NEXT block . END
+    (2) block -> block . statement
+    (4) statement -> . IF LPAREN comparison RPAREN THEN block END
+    (5) statement -> . IF LPAREN comparison RPAREN THEN block ELSE block END
+    (6) statement -> . FOR LPAREN expression TO expression RPAREN NEXT block END
+    (7) statement -> . WHILE LPAREN comparison RPAREN NEXT block END
+    (8) statement -> . PRINT LPAREN expression RPAREN SEMICOLON
+    (9) statement -> . VARIABLE EQUALS expression SEMICOLON
+    (10) statement -> . VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
+    (11) statement -> . ADDRESS VARIABLE EQUALS expression SEMICOLON
+    (12) statement -> . VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
+    (13) statement -> . ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
+    (14) statement -> . VAR VARIABLE EQUALS expression SEMICOLON
+    (15) statement -> . VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
+    (16) statement -> . CONST VARIABLE EQUALS expression SEMICOLON
+    (17) statement -> . CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
+    (18) statement -> . DEF VARIABLE LPAREN dargument RPAREN DO block END
+    (19) statement -> . DEF VARIABLE LPAREN RPAREN DO block END
+    (20) statement -> . VARIABLE LPAREN cargument RPAREN SEMICOLON
+    (21) statement -> . VARIABLE LPAREN RPAREN SEMICOLON
+    (26) statement -> . DELETE VARIABLE SEMICOLON
+    (27) statement -> . expression SEMICOLON
+    (34) expression -> . expression PLUS expression
+    (35) expression -> . expression MINUS expression
+    (36) expression -> . expression TIMES expression
+    (37) expression -> . expression DIVIDE expression
+    (38) expression -> . expression EXPONENT expression
+    (39) expression -> . expression REMAINDER expression
+    (40) expression -> . expression INFERIOR expression
+    (41) expression -> . expression INFERIOR_OR_EQUAL expression
+    (42) expression -> . expression SUPERIOR expression
+    (43) expression -> . expression SUPERIOR_OR_EQUAL expression
+    (44) expression -> . expression DOUBLE_EQUALS expression
+    (45) expression -> . expression DIFFERENT expression
+    (46) expression -> . MINUS expression
+    (47) expression -> . LPAREN expression RPAREN
+    (48) expression -> . TYPEOF LPAREN VARIABLE RPAREN
+    (49) expression -> . VARIABLE LSQUARE expression RSQUARE
+    (50) expression -> . VARIABLE LSQUARE expression COLON expression RSQUARE
+    (51) expression -> . VARIABLE LSQUARE COLON expression RSQUARE
+    (52) expression -> . VARIABLE LSQUARE expression COLON RSQUARE
+    (53) expression -> . VARIABLE LSQUARE COLON RSQUARE
+    (54) expression -> . NUMBER
+    (55) expression -> . STRING
+    (56) expression -> . VARIABLE
+
+    END             shift and go to state 164
+    IF              shift and go to state 4
+    FOR             shift and go to state 6
+    WHILE           shift and go to state 8
+    PRINT           shift and go to state 9
+    VARIABLE        shift and go to state 10
+    ADDRESS         shift and go to state 11
+    VAR             shift and go to state 12
+    CONST           shift and go to state 13
+    DEF             shift and go to state 14
+    DELETE          shift and go to state 15
+    MINUS           shift and go to state 16
+    LPAREN          shift and go to state 5
+    TYPEOF          shift and go to state 17
+    NUMBER          shift and go to state 18
+    STRING          shift and go to state 19
+
     expression                     shift and go to state 7
     statement                      shift and go to state 20
 
-state 160
+state 161
 
     (13) statement -> ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON .
 
@@ -5292,31 +5216,31 @@ state 160
     ELSE            reduce using rule 13 (statement -> ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON .)
 
 
-state 161
-
-    (18) statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .
-
-    IF              reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    FOR             reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    WHILE           reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    PRINT           reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    VARIABLE        reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    ADDRESS         reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    VAR             reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    CONST           reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    DEF             reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    DELETE          reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    MINUS           reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    LPAREN          reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    TYPEOF          reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    NUMBER          reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    STRING          reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    $end            reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    END             reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-    ELSE            reduce using rule 18 (statement -> DEF VARIABLE LPAREN argument RPAREN DO block END .)
-
-
 state 162
+
+    (18) statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .
+
+    IF              reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    FOR             reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    WHILE           reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    PRINT           reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    VARIABLE        reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    ADDRESS         reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    VAR             reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    CONST           reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    DEF             reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    DELETE          reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    MINUS           reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    LPAREN          reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    TYPEOF          reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    NUMBER          reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    STRING          reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    $end            reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    END             reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+    ELSE            reduce using rule 18 (statement -> DEF VARIABLE LPAREN dargument RPAREN DO block END .)
+
+
+state 163
 
     (5) statement -> IF LPAREN comparison RPAREN THEN block ELSE block END .
 
@@ -5340,7 +5264,7 @@ state 162
     ELSE            reduce using rule 5 (statement -> IF LPAREN comparison RPAREN THEN block ELSE block END .)
 
 
-state 163
+state 164
 
     (6) statement -> FOR LPAREN expression TO expression RPAREN NEXT block END .
 
@@ -5510,7 +5434,3 @@ WARNING: shift/reduce conflict for SUPERIOR in state 119 resolved as shift
 WARNING: shift/reduce conflict for SUPERIOR_OR_EQUAL in state 119 resolved as shift
 WARNING: shift/reduce conflict for DOUBLE_EQUALS in state 119 resolved as shift
 WARNING: shift/reduce conflict for DIFFERENT in state 119 resolved as shift
-WARNING: reduce/reduce conflict in state 73 resolved using rule (argument -> VARIABLE)
-WARNING: rejected rule (expression -> VARIABLE) in state 73
-WARNING: reduce/reduce conflict in state 130 resolved using rule (argument -> argument SEPARATOR VARIABLE)
-WARNING: rejected rule (expression -> VARIABLE) in state 130
