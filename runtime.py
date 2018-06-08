@@ -102,25 +102,47 @@ def runtime(p, context = variables):
             except LookupError:
                 raise PlySyntaxError.undefined(p[1])
         elif p[0] == 'DEFINE':            
+            # try:
+            #     variables[p[3]]
+            #     raise PlySyntaxError.defined(p[3])
+            # except LookupError:
+            #     if p[1] & Variable.pointer:
+            #         if p[1] & Variable.unknown:
+            #             try:
+            #                 variables[p[3]] = Variable(variables[p[4]], p[1] ^ Variable.unknown, p[2], None) # remove unknown flag
+            #             except:
+            #                 raise PlySyntaxError.undefined(p[4])
+            #     elif p[1] & ( Variable.number | Variable.string ):
+            #         a = runtime(p[4], context)
+            #         if type(a) is int or type(a) is float:
+            #             variables[p[3]] = Variable(a, Variable.number, p[2], None)
+            #         else:
+            #             variables[p[3]] = Variable(a, Variable.string, p[2], None)
+            #     elif p[1] & Variable.function:
+            #         a = p[4] if type(p[4]) is tuple else tuple([ p[4] ])
+            #         variables[p[3]] = Variable(p[5], Variable.function, p[2], None if p[4] is None else flatten(a))
+            #     else:
+            #         raise PlyTypeError.unknown()
             try:
-                variables[p[3]]
+                context[p[3]]
                 raise PlySyntaxError.defined(p[3])
             except LookupError:
                 if p[1] & Variable.pointer:
                     if p[1] & Variable.unknown:
                         try:
-                            variables[p[3]] = Variable(variables[p[4]], p[1] ^ Variable.unknown, p[2], None) # remove unknown flag
+                            context[p[3]] = Variable(context[p[4]], p[1] ^ Variable.unknown, p[2],
+                                                       None)  # remove unknown flag
                         except:
                             raise PlySyntaxError.undefined(p[4])
-                elif p[1] & ( Variable.number | Variable.string ):
+                elif p[1] & (Variable.number | Variable.string):
                     a = runtime(p[4], context)
                     if type(a) is int or type(a) is float:
-                        variables[p[3]] = Variable(a, Variable.number, p[2], None)
+                        context[p[3]] = Variable(a, Variable.number, p[2], None)
                     else:
-                        variables[p[3]] = Variable(a, Variable.string, p[2], None)
+                        context[p[3]] = Variable(a, Variable.string, p[2], None)
                 elif p[1] & Variable.function:
-                    a = p[4] if type(p[4]) is tuple else tuple([ p[4] ])
-                    variables[p[3]] = Variable(p[5], Variable.function, p[2], None if p[4] is None else flatten(a))
+                    a = p[4] if type(p[4]) is tuple else tuple([p[4]])
+                    context[p[3]] = Variable(p[5], Variable.function, p[2], None if p[4] is None else flatten(a))
                 else:
                     raise PlyTypeError.unknown()
         elif p[0] == 'CALL_FUNCTION':
@@ -145,7 +167,7 @@ def runtime(p, context = variables):
                         b = list(map(lambda b: runtime(b, context), list(a)))
                         scope = getAllScope(context.copy(), _.arguments, b)
 
-                    return runtime(_.value, scope)
+                    return runtime(_.value, scope.copy())
                 else:
                     raise PlySyntaxError('this method wait a variable of type <class \'function\'>')
             except LookupError:
