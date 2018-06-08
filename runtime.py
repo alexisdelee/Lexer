@@ -187,7 +187,10 @@ def runtime(p):
                         i = 0
                         for key, data in list(_.arguments.items())[:index]:
                             if scope[key] is not None:
-                                scope[key] = Variable(arguments[i], Variable.none, True, None)
+                                if type(arguments[i]) is int or type(arguments[i]) is float:
+                                    scope[key] = Variable(arguments[i], Variable.number, True, None)
+                                else:
+                                    scope[key] = Variable(arguments[i], Variable.string, True, None)
                                 i = i + 1
 
                         for key, value in scope.items():
