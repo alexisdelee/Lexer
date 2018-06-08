@@ -19,5 +19,9 @@ class PlyTypeError(PlyError):
     def assignment():
         return PlyTypeError('assignment to constant variable')
 
+    @staticmethod
+    def unknown():
+        return PlyTypeError('unknown type')
+
     def __str__(self):
         return 'TypeError: {0}'.format(self.message)

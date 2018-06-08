@@ -18,13 +18,13 @@ reserved = {
     'print' : 'PRINT',
     'var'   : 'VAR',
     'const' : 'CONST',
-    'ptr'   : 'PTR',
     'def'   : 'DEF',
     'do'    : 'DO',
     ','     : 'SEPARATOR',
     '&'     : 'ADDRESS',
     '"'     : 'QUOTE',
-    'typeof': 'TYPEOF'
+    'typeof': 'TYPEOF',
+    'delete': 'DELETE'
 }
 
 tokens = [
@@ -123,10 +123,6 @@ def t_CONST(t):
     r'const'
     return t
 
-def t_PTR(t):
-    r'ptr'
-    return t
-
 def t_DEF(t):
     r'def'
     return t
@@ -149,6 +145,10 @@ def t_QUOTE(t):
 
 def t_TYPEOF(t):
     r'typeof'
+    return t
+
+def t_DELETE(t):
+    r'delete'
     return t
 
 # Build the lexer
@@ -201,59 +201,78 @@ def p_statement_print(p):
     p[0] = ('PRINT', p[3])
 
 def p_statement_assign(p):
-    'statement : VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('=', Variable.number | Variable.string, p[1], p[3])
+    '''statement : VARIABLE EQUALS expression SEMICOLON
+                 | VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
+    if len(p) is 5:
+        p[0] = ('=', Variable.number | Variable.string | Variable.pointer, p[1], p[3])
+    else:
+        p[0] = ('=', Variable.pointer | Variable.unknown, p[1], p[4])
 
 def p_statement_assign_pointer(p):
     'statement : ADDRESS VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('=', Variable.pointer, p[2], p[4])
+    p[0] = ('=', Variable.pointer | Variable.reference, p[2], p[4])
 
 def p_statement_assign_element(p):
     '''statement : VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
                  | ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON'''
     if len(p) is 8:
-        p[0] = ('SETAT', Variable.string, p[1], p[3], p[6])
+        p[0] = ('SETAT', Variable.char, p[1], p[3], p[6])
     else:
-        p[0] = ('SETAT', Variable.pointer, p[2], p[4], p[7])
+        p[0] = ('SETAT', Variable.pointer | Variable.reference | Variable.char, p[2], p[4], p[7])
 
 def p_statement_define(p):
-    'statement : VAR VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('DEFINE', Variable.number | Variable.string, True, p[2], p[4])
+    '''statement : VAR VARIABLE EQUALS expression SEMICOLON
+                 | VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
+    if len(p) is 6:
+        p[0] = ('DEFINE', Variable.number | Variable.string, True, p[2], p[4])
+    else:
+        p[0] = ('DEFINE', Variable.pointer | Variable.unknown, True, p[2], p[5])
 
 def p_statement_define_constant(p):
-    'statement : CONST VARIABLE EQUALS expression SEMICOLON'
-    p[0] = ('DEFINE', Variable.number | Variable.string, False, p[2], p[4])
-
-def p_statement_define_pointer(p):
-    'statement : PTR VARIABLE EQUALS VARIABLE SEMICOLON'
-    p[0] = ('DEFINE', Variable.pointer, True, p[2], p[4])
+    '''statement : CONST VARIABLE EQUALS expression SEMICOLON
+                 | CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
+    if len(p) is 6:
+        p[0] = ('DEFINE', Variable.number | Variable.string, False, p[2], p[4])
+    else:
+        p[0] = ('DEFINE', Variable.pointer | Variable.unknown, False, p[2], p[5])
 
 def p_statement_define_function(p):
-    'statement : DEF VARIABLE LPAREN RPAREN DO block END'    
-    # p[0] = ('DEFINE', 'function', p[2], p[4], p[7])
-    p[0] = ('DEFINE', Variable.function, False, p[2], None, p[6])
+    '''statement : DEF VARIABLE LPAREN argument RPAREN DO block END
+                 | DEF VARIABLE LPAREN RPAREN DO block END'''
+    if len(p) is 9:
+        p[0] = ('DEFINE', Variable.function, False, p[2], p[4], p[7])
+    else:
+        p[0] = ('DEFINE', Variable.function, False, p[2], None, p[6])
 
 def p_statement_call_function(p):
-    'statement : VARIABLE LPAREN RPAREN SEMICOLON'
-    p[0] = ('CALL_FUNCTION', p[1])
-    # p[0] = ('CALL_FUNCTION', p[1], p[3])
+    '''statement : VARIABLE LPAREN argument RPAREN SEMICOLON
+                 | VARIABLE LPAREN RPAREN SEMICOLON'''
+    if len(p) is 6:
+        p[0] = ('CALL_FUNCTION', p[1], p[3])
+    else:
+        p[0] = ('CALL_FUNCTION', p[1], None)
 
 # fix bugs
-def p_statement_arguments(p):
-    'arguments : argument'
-    for item in enumerate(p):
-        print(item)
+def p_statement_define_argument(p):
+    '''argument : argument SEPARATOR VARIABLE
+                | VARIABLE'''
+    if len(p) is 4:
+        p[0] = (p[1], p[3])
+    else:
+        p[0] = (p[1])
 
-    p[0] = p[1]
-
-def p_statement_argument(p):
+def p_statement_call_argument(p):
     '''argument : argument SEPARATOR expression
-                | expression'''        
+                | expression'''
     if len(p) is 4:
         p[0] = (p[1], p[3])
     else:
         p[0] = (p[1])
 # fix bugs
+
+def p_statement_delete(p):
+    'statement : DELETE VARIABLE SEMICOLON'
+    p[0] = ('DELETE', p[2])
 
 def p_statement_expr(p):
     'statement : expression SEMICOLON'
