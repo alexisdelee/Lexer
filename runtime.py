@@ -130,8 +130,7 @@ def runtime(p, context = variables):
                 if p[1] & Variable.pointer:
                     if p[1] & Variable.unknown:
                         try:
-                            context[p[3]] = Variable(context[p[4]], p[1] ^ Variable.unknown, p[2],
-                                                       None)  # remove unknown flag
+                            context[p[3]] = Variable(context[p[4]], p[1] ^ Variable.unknown, p[2], None)  # remove unknown flag
                         except:
                             raise PlySyntaxError.undefined(p[4])
                 elif p[1] & (Variable.number | Variable.string):
@@ -151,18 +150,6 @@ def runtime(p, context = variables):
                 scope = context
                 if _.type & Variable.function:
                     if p[2] is not None:
-                        # a = p[2] if type(p[2]) is tuple else tuple([ p[2] ])
-                        # arguments = flatten(a)
-                        # scope = { **context, **_.arguments }
-                        #
-                        # index = len(arguments) if len(arguments) < len(_.arguments.items()) else len(_.arguments.items())
-                        # i = 0
-                        # for key, data in list(_.arguments.items())[:index]:
-                        #     if type(arguments[i]) is int or type(arguments[i]) is float:
-                        #         scope[key] = Variable(arguments[i], Variable.number, True, None)
-                        #     else:
-                        #         scope[key] = Variable(arguments[i], Variable.string, True, None)
-                        #     i = i + 1
                         a = p[2] if type(p[2]) is tuple else tuple([ p[2] ])
                         b = list(map(lambda b: runtime(b, context), list(a)))
                         scope = getAllScope(context.copy(), _.arguments, b)
@@ -174,21 +161,21 @@ def runtime(p, context = variables):
                 raise PlySyntaxError.undefined(p[1])
         elif p[0] == 'IF':
             a = PlyTypeError.require(runtime(p[1], context), [ bool ])
-            return runtime(p[2], context) if a else None
+            return runtime(p[2], context.copy()) if a else None
         elif p[0] == 'IFELSE':
             a = PlyTypeError.require(runtime(p[1], context), [ bool ])
-            return runtime(p[2], context) if a else runtime(p[3], context)
+            return runtime(p[2], context.copy()) if a else runtime(p[3], context)
         elif p[0] == 'FOR':
             a = PlyTypeError.require(runtime(p[1], context), [ int ])
             b = PlyTypeError.require(runtime(p[2], context), [ int ])
             for i in range(a, b + 1):
-                runtime(p[3], context)
+                runtime(p[3], context.copy())
                 a = PlyTypeError.require(runtime(p[1], context), [ int ]) # refresh
                 b = PlyTypeError.require(runtime(p[2], context), [ int ])
         elif p[0] == 'WHILE':
             a = PlyTypeError.require(runtime(p[1], context), [ bool ])
             while a:
-                runtime(p[2], context)
+                runtime(p[2], context.copy())
                 a = PlyTypeError.require(runtime(p[1], context), [ bool ]) # refresh
         elif p[0] == 'PRINT':
             # return eval(p[1])
