@@ -1,3 +1,6 @@
+from inspect import currentframe
+from exceptions.syntaxerror import PlySyntaxError
+
 def flatten(arguments, argumentsList = []):
     for argument in arguments:
         if type(argument) is not tuple:
@@ -11,9 +14,12 @@ def getAllScope(context, argumentKeys, argumentsValues):
     arguments = flatten(argumentsValues)
     scope = { **context, **argumentKeys }
 
-    index = len(arguments) if len(arguments) < len(argumentKeys.items()) else len(argumentKeys.items())
+    argc = len(argumentKeys.items())
+    if len(arguments) != argc:
+        raise PlySyntaxError.expected(currentframe(), argc)
+
     i = 0
-    for key, data in list(argumentKeys.items())[:index]:
+    for key, data in list(argumentKeys.items())[:argc]:
         if type(arguments[i]) is int or type(arguments[i]) is float:
             scope[key] = Variable(arguments[i], Variable.number, True, None)
         else:

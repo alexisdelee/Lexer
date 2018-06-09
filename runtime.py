@@ -1,3 +1,4 @@
+from inspect import currentframe
 from exceptions.error import PlyError
 from exceptions.internalerror import PlyInternalError
 from exceptions.rangeerror import PlyRangeError
@@ -74,25 +75,25 @@ def runtime(p, context = variables):
                 if p[1] & Variable.pointer:
                     b = _ if p[1] & Variable.reference else context[p[2]]
                     if b.writable is False:
-                        raise PlyTypeError.assignment()
+                        raise PlyTypeError.assignment(currentframe())
 
                     if p[1] & Variable.unknown:
                         try:
                             b.value = context[p[3]]
                             b.type = Variable.pointer
                         except LookupError:
-                            raise PlySyntaxError.undefined(p[3])
+                            raise PlySyntaxError.undefined(currentframe(), p[3])
                     else:
                         b.value = a
                         b.type = Variable.number if type(a) is int or type(a) is float else Variable.string
                 elif p[1] & ( Variable.number | Variable.string ):
                     if _.writable is False:
-                        raise PlyTypeError.assignment()
+                        raise PlyTypeError.assignment(currentframe())
 
                     _.value = a
                     _.type = Variable.number if type(a) is int or type(a) is float else Variable.string
             except LookupError:
-                raise PlySyntaxError.undefined(p[2])
+                raise PlySyntaxError.undefined(currentframe(), p[2])
         elif p[0] == 'RETURN':
             try:
                 context[p[1]]
@@ -100,7 +101,7 @@ def runtime(p, context = variables):
                 if _.type & ( Variable.number | Variable.string ):
                     return _.value
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'DEFINE':            
             # try:
             #     variables[p[3]]
@@ -125,14 +126,14 @@ def runtime(p, context = variables):
             #         raise PlyTypeError.unknown()
             try:
                 context[p[3]]
-                raise PlySyntaxError.defined(p[3])
+                raise PlySyntaxError.defined(currentframe(), p[3])
             except LookupError:
                 if p[1] & Variable.pointer:
                     if p[1] & Variable.unknown:
                         try:
                             context[p[3]] = Variable(context[p[4]], p[1] ^ Variable.unknown, p[2], None)  # remove unknown flag
                         except:
-                            raise PlySyntaxError.undefined(p[4])
+                            raise PlySyntaxError.undefined(currentframe(), p[4])
                 elif p[1] & (Variable.number | Variable.string):
                     a = runtime(p[4], context)
                     if type(a) is int or type(a) is float:
@@ -143,7 +144,7 @@ def runtime(p, context = variables):
                     a = p[4] if type(p[4]) is tuple else tuple([p[4]])
                     context[p[3]] = Variable(p[5], Variable.function, p[2], None if p[4] is None else flatten(a))
                 else:
-                    raise PlyTypeError.unknown()
+                    raise PlyTypeError.unknown(currentframe())
         elif p[0] == 'CALL_FUNCTION':
             try:
                 _ = Variable.getScope(context[p[1]])
@@ -153,12 +154,16 @@ def runtime(p, context = variables):
                         a = p[2] if type(p[2]) is tuple else tuple([ p[2] ])
                         b = list(map(lambda b: runtime(b, context), list(a)))
                         scope = getAllScope(context.copy(), _.arguments, b)
+                    else:
+                        argc = len(_.arguments.items())
+                        if argc != 0:
+                            raise PlySyntaxError.expected(currentframe(), argc)
 
                     return runtime(_.value, scope.copy())
                 else:
-                    raise PlySyntaxError('this method wait a variable of type <class \'function\'>')
+                    raise PlySyntaxError(currentframe(), 'this method wait a variable of type <class \'function\'>')
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'IF':
             a = PlyTypeError.require(runtime(p[1], context), [ bool ])
             return runtime(p[2], context.copy()) if a else None
@@ -188,15 +193,15 @@ def runtime(p, context = variables):
                 b = PlyTypeError.require(runtime(p[3], context), [ int ])
                 c = PlyTypeError.require(runtime(p[4], context), [ str ])
                 if len(c) != 1:
-                    raise PlyTypeError('this method wait a variable of type <type \'char\'> instead of <type \'str\'>')
+                    raise PlyTypeError(currentframe(), 'this method wait a variable of type <type \'char\'> instead of <type \'str\'>')
                 elif b < 0 or b > len(c) - 1:
-                    raise PlyRangeError.out(c)
+                    raise PlyRangeError.out(currentframe(), c)
 
                 d = list(a.value)
                 d[b] = c[0]
                 a.value = ''.join(d)
             except LookupError:
-                raise PlySyntaxError.undefined(p[2])
+                raise PlySyntaxError.undefined(currentframe(), p[2])
         elif p[0] == 'GETAT':
             try:
                 context[p[1]]
@@ -214,7 +219,7 @@ def runtime(p, context = variables):
             except ValueError:
                 return -1
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'SUBSTRING':
             try:
                 context[p[1]]
@@ -228,7 +233,7 @@ def runtime(p, context = variables):
                     b = PlyTypeError.require(runtime(p[3], context), [ None, int ])
                     return _[a:b] # substring
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'TYPEOF':
             try:
                 context[p[1]]
@@ -248,13 +253,13 @@ def runtime(p, context = variables):
                 else:
                     return 'none'
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'DELETE':
             try:
                 variables[p[1]]
                 del variables[p[1]]
             except LookupError:
-                raise PlySyntaxError.undefined(p[1])
+                raise PlySyntaxError.undefined(currentframe(), p[1])
         else:
             for item in enumerate(p):
                 if len(p) is 2:

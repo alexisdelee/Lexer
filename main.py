@@ -1,3 +1,4 @@
+from inspect import currentframe
 from exceptions.error import PlyError
 from exceptions.internalerror import PlyInternalError
 from exceptions.rangeerror import PlyRangeError
@@ -352,7 +353,7 @@ def p_expression_variable(p):
     p[0] = ('RETURN', p[1])
 
 def p_error(p):
-    raise PlySyntaxError(p.value)
+    raise PlySyntaxError(currentframe(), p.value)
 
 import ply.yacc as yacc
 yacc.yacc()
@@ -368,5 +369,5 @@ while True:
     except PlyError as e:
         print(e)
     except Exception as e:
-        e = PlyInternalError(e.__str__())
+        e = PlyInternalError(currentframe(), e.__str__())
         print(e)
