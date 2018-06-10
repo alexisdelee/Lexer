@@ -359,7 +359,7 @@ def p_expression_string(p):
 
 def p_expression_array(p):
     'expression : LSQUARE cargument RSQUARE'
-    p[0] = (p[2])
+    p[0] = (list(p[2]))
 
 def p_expression_variable(p):
     'expression : VARIABLE'

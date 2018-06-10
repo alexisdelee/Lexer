@@ -11,19 +11,24 @@ variables = {}
 
 def runtime(p, context = variables):
     if type(p) is int \
-            or type(p) is float \
-            or type(p) is str \
-            or type(p) is list \
-            or p is None:
+        or type(p) is float \
+        or type(p) is str \
+        or type(p) is list \
+        or p is None:
         return p
     else:
         if p[0] == '+':
-            a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ int, float, str ])
-            b = PlyTypeError.require(currentframe(), runtime(p[2], context), [ int, float, str ])
+            a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ int, float, str, list ])
+            b = PlyTypeError.require(currentframe(), runtime(p[2], context), [ int, float, str, list ])
+
+            if type(a) is list or type(b) is list:
+                a = a if type(a) is list else [ a ]
+                b = b if type(b) is list else [ b ]
             if type(a) is str or type(b) is str:
-                return str(a) + str(b)
-            else:
-                return a + b
+                a = str(a)
+                b = str(b)
+
+            return a + b
         elif p[0] == '-':
             a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ int, float ])
             b = PlyTypeError.require(currentframe(), runtime(p[2], context), [ int, float ])
@@ -95,8 +100,11 @@ def runtime(p, context = variables):
                         _.value = a
                         _.type = Variable.number if type(a) is int or type(a) is float else Variable.string
                     else:
-                        b = p[3] if type(p[3]) is tuple else tuple([ p[3] ])
-                        _.value = list(map(lambda c: runtime(c, context), list(b)))
+                        if type(a) is list:
+                            _.value = a
+                        else:
+                            b = p[3] if type(p[3]) is tuple else tuple([ p[3] ])
+                            _.value = list(map(lambda c: runtime(c, context), list(b)))
                         _.type = Variable.array
                 else:
                     raise PlyTypeError.unknown(currentframe())
@@ -130,9 +138,12 @@ def runtime(p, context = variables):
                     elif type(a) is str:
                         context[p[3]] = Variable(a, Variable.string, p[2], None)
                     else:
-                        a = p[4] if type(p[4]) is tuple else tuple([p[4]])
-                        b = list(map(lambda b: runtime(b, context), list(a)))
-                        context[p[3]] = Variable(b, Variable.array, p[2], None)
+                        if type(a) is list:
+                            context[p[3]] = Variable(a, Variable.array, p[2], None)
+                        else:
+                            a = p[4] if type(p[4]) is tuple else tuple([p[4]])
+                            b = list(map(lambda b: runtime(b, context), list(a)))
+                            context[p[3]] = Variable(b, Variable.array, p[2], None)
                 elif p[1] & Variable.function:
                     a = p[4] if type(p[4]) is tuple else tuple([p[4]])
                     context[p[3]] = Variable(p[5], Variable.function, p[2], None if p[4] is None else flatten(a))
