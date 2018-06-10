@@ -175,19 +175,21 @@ def p_scope(p):
 
 def p_block(p):
     '''block : block statement
-             | statement'''    
-    if len(p) is 3:
-        p[0] = (p[1], p[2])
-    else:
+             | statement'''
+    l = len(p)
+    if l is 2:
         p[0] = (p[1])
+    elif l is 3:
+        p[0] = (p[1], p[2])
 
 def p_statement_condition(p):
     '''statement : IF LPAREN comparison RPAREN THEN block END
-                 | IF LPAREN comparison RPAREN THEN block ELSE block END'''    
-    if len(p) is 10:
-        p[0] = ('IFELSE', p[3], p[6], p[8])
-    else:
+                 | IF LPAREN comparison RPAREN THEN block ELSE block END'''
+    l = len(p)
+    if l is 8:
         p[0] = ('IF', p[3], p[6])
+    elif l is 10:
+        p[0] = ('IFELSE', p[3], p[6], p[8])
 
 def p_statement_for(p):
     '''statement : FOR LPAREN expression TO expression RPAREN NEXT block END'''
@@ -204,9 +206,10 @@ def p_statement_print(p):
 def p_statement_assign(p):
     '''statement : VARIABLE EQUALS expression SEMICOLON
                  | VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
-    if len(p) is 5:
-        p[0] = ('=', Variable.number | Variable.string | Variable.pointer, p[1], p[3])
-    else:
+    l = len(p)
+    if l is 5:
+        p[0] = ('=', Variable.number | Variable.string | Variable.array, p[1], p[3])
+    elif l is 6:
         p[0] = ('=', Variable.pointer | Variable.unknown, p[1], p[4])
 
 def p_statement_assign_pointer(p):
@@ -216,66 +219,71 @@ def p_statement_assign_pointer(p):
 def p_statement_assign_element(p):
     '''statement : VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON
                  | ADDRESS VARIABLE LSQUARE expression RSQUARE EQUALS expression SEMICOLON'''
-    if len(p) is 8:
-        p[0] = ('SETAT', Variable.char, p[1], p[3], p[6])
-    else:
-        p[0] = ('SETAT', Variable.pointer | Variable.reference | Variable.char, p[2], p[4], p[7])
+    l = len(p)
+    if l is 8:
+        p[0] = ('SETAT', Variable.char | Variable.array, p[1], p[3], p[6])
+    elif l is 9:
+        p[0] = ('SETAT', Variable.pointer | Variable.reference | Variable.char | Variable.array, p[2], p[4], p[7])
 
 def p_statement_define(p):
     '''statement : VAR VARIABLE EQUALS expression SEMICOLON
                  | VAR VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
-    if len(p) is 6:
-        p[0] = ('DEFINE', Variable.number | Variable.string, True, p[2], p[4])
-    else:
+    l = len(p)
+    if l is 6:
+        p[0] = ('DEFINE', Variable.number | Variable.string | Variable.array, True, p[2], p[4])
+    elif l is 7:
         p[0] = ('DEFINE', Variable.pointer | Variable.unknown, True, p[2], p[5])
 
 def p_statement_define_constant(p):
     '''statement : CONST VARIABLE EQUALS expression SEMICOLON
-                 | CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON'''
-    if len(p) is 6:
+                 | CONST VARIABLE EQUALS ADDRESS VARIABLE SEMICOLON
+                 | CONST VARIABLE EQUALS LSQUARE cargument RSQUARE SEMICOLON'''
+    l = len(p)
+    if l is 6:
         p[0] = ('DEFINE', Variable.number | Variable.string, False, p[2], p[4])
-    else:
+    elif l is 7:
         p[0] = ('DEFINE', Variable.pointer | Variable.unknown, False, p[2], p[5])
+    elif l is 8:
+        p[0] = ('DEFINE', Variable.array, False, p[2], p[5])
 
 def p_statement_define_function(p):
     '''statement : DEF VARIABLE LPAREN dargument RPAREN DO block END
                  | DEF VARIABLE LPAREN RPAREN DO block END'''
-    if len(p) is 9:
-        p[0] = ('DEFINE', Variable.function, False, p[2], p[4], p[7])
-    else:
+    l = len(p)
+    if l is 8:
         p[0] = ('DEFINE', Variable.function, False, p[2], None, p[6])
+    elif l is 9:
+        p[0] = ('DEFINE', Variable.function, False, p[2], p[4], p[7])
 
 def p_statement_call_function(p):
     '''statement : VARIABLE LPAREN cargument RPAREN SEMICOLON
                  | VARIABLE LPAREN RPAREN SEMICOLON'''
-    if len(p) is 6:
-        p[0] = ('CALL_FUNCTION', p[1], p[3])
-    else:
+    l = len(p)
+    if l is 5:
         p[0] = ('CALL_FUNCTION', p[1], None)
+    elif l is 6:
+        p[0] = ('CALL_FUNCTION', p[1], p[3])
 
-# fix bugs
 def p_statement_define_argument(p):
     '''dargument : dargument SEPARATOR VARIABLE
                  | VARIABLE'''
-    if len(p) is 4:
-        p[0] = (p[1], p[3])
-    else:
+    l = len(p)
+    if l is 2:
         p[0] = (p[1])
+    elif l is 4:
+        p[0] = (p[1], p[3])
 
 def p_statement_call_argument(p):
     '''cargument : cargument SEPARATOR expression
                  | expression'''
-    if len(p) is 4:
+    l = len(p)
+    if l is 2:
+        p[0] = tuple([p[1]])
+    elif l is 4:
         if type(p[1]) is tuple:
-            print('argument', list(p[1]) + [ p[3] ])
             p[0] = tuple(list(p[1]) + [ p[3] ])
         else:
-            print('argument', [ p[1] ] + [ p[3] ])
-            p[0] = tuple([ p[1] ] + [p[3]])
-        # p[0] = (p[1], p[3])
-    else:
-        p[0] = tuple([ p[1] ])
-# fix bugs
+            p[0] = tuple([ p[1] ] + [ p[3] ])
 
 def p_statement_delete(p):
     'statement : DELETE VARIABLE SEMICOLON'
@@ -330,15 +338,16 @@ def p_expression_substring(p):
                   | VARIABLE LSQUARE COLON expression RSQUARE
                   | VARIABLE LSQUARE expression COLON RSQUARE
                   | VARIABLE LSQUARE COLON RSQUARE'''
-    if len(p) is 7:
-        p[0] = ('SUBSTRING', p[1], p[3], p[5])
-    elif len(p) is 6:
+    l = len(p)
+    if l is 5:
+        p[0] = ('SUBSTRING', p[1], None, None)
+    elif l is 6:
         if p[3] == ':':
             p[0] = ('SUBSTRING', p[1], None, p[4])
         else:
             p[0] = ('SUBSTRING', p[1], p[3], None)
-    elif len(p) is 5:
-        p[0] = ('SUBSTRING', p[1], None, None)
+    elif l is 7:
+        p[0] = ('SUBSTRING', p[1], p[3], p[5])
 
 def p_expression_number(p):
     'expression : NUMBER'
@@ -347,6 +356,10 @@ def p_expression_number(p):
 def p_expression_string(p):
     'expression : STRING'
     p[0] = p[1]
+
+def p_expression_array(p):
+    'expression : LSQUARE cargument RSQUARE'
+    p[0] = (p[2])
 
 def p_expression_variable(p):
     'expression : VARIABLE'
@@ -360,7 +373,7 @@ yacc.yacc()
 
 while True:
     try:
-        s = input('calc > ')
+        s = input('>> ')
     except EOFError:
         break
 

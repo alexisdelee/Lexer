@@ -29,13 +29,14 @@ def getAllScope(context, argumentKeys, argumentsValues):
     return scope
 
 class Variable:
-    none = 1
-    pointer = 2
-    number = 4
-    string = 8
-    char = 16
-    function = 32
-    unknown = 1073741824
+    none      = 1
+    pointer   = 2
+    number    = 4
+    string    = 8
+    char      = 16
+    function  = 32
+    array     = 64
+    unknown   = 1073741824
     reference = 2147483648
 
     def __init__(self, value, type, writable, arguments):
