@@ -194,7 +194,7 @@ def runtime(p, context = variables):
             print(runtime(p[1], context))
         elif p[0] == 'SETAT':
             try:
-                a = Variable.getScope(variables[p[2]]) if p[1] & Variable.pointer and variables[p[2]].type & Variable.pointer else variables[p[2]]
+                a = Variable.getScope(context[p[2]]) if p[1] & Variable.pointer and context[p[2]].type & Variable.pointer else context[p[2]]
                 PlyTypeError.require(currentframe(), a.value, [ str, list ])
                 b = PlyTypeError.require(currentframe(), runtime(p[3], context), [ int ])
 
@@ -210,7 +210,7 @@ def runtime(p, context = variables):
                     a.value = ''.join(d)
                 else:
                     c = PlyTypeError.require(currentframe(), runtime(p[4], context), [ bool, int, float, str ])
-                    if b < 0 or b > len(c) -1:
+                    if b < 0 or b > len(a.value) -1:
                         raise PlyRangeError.out(currentframe(), a.value)
 
                     a.value[b] = c
@@ -269,9 +269,9 @@ def runtime(p, context = variables):
                     return prefix + 'number'
                 elif context[p[1]].type & Variable.string:
                     return prefix + 'string'
-                elif variables[p[1]].type & Variable.function:
+                elif context[p[1]].type & Variable.function:
                     return 'function'
-                elif variables[p[1]].type & Variable.array:
+                elif context[p[1]].type & Variable.array:
                     return 'array'
                 else:
                     return 'none'
@@ -291,12 +291,12 @@ def runtime(p, context = variables):
                 raise PlySyntaxError.undefined(currentframe(), p[1])
         elif p[0] == 'UNPACK':
             try:
-                variables[p[1]]
+                context[p[1]]
 
-                a = Variable.getScope(variables[p[1]])
-                b = PlyTypeError.require(currentframe(), runtime(a.value, context), [ int, float, str ])
+                a = Variable.getScope(context[p[1]])
+                b = PlyTypeError.require(currentframe(), runtime(a.value, context), [ int, float, str, list ])
 
-                if type(b) is str:
+                if type(b) is str or type(b) is list:
                     return list(b)
                 else:
                     return list(str(b))
