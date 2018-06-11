@@ -25,7 +25,9 @@ reserved = {
     '&'     : 'ADDRESS',
     '"'     : 'QUOTE',
     'typeof': 'TYPEOF',
-    'delete': 'DELETE'
+    'delete': 'DELETE',
+    'len'   : 'LENGTH',
+    '...'   : 'UNPACK'
 }
 
 tokens = [
@@ -150,6 +152,14 @@ def t_TYPEOF(t):
 
 def t_DELETE(t):
     r'delete'
+    return t
+
+def t_LENGTH(t):
+    r'len'
+    return t
+
+def t_UNPACK(t):
+    r'\.\.\.'
     return t
 
 # Build the lexer
@@ -325,9 +335,17 @@ def p_expression_group(p):
     'expression : LPAREN expression RPAREN'
     p[0] = p[2]
 
+def p_expression_unpack(p):
+    'expression : LSQUARE UNPACK VARIABLE RSQUARE'
+    p[0] = ('UNPACK', p[3])
+
 def p_expression_typeof(p):
     'expression : TYPEOF LPAREN VARIABLE RPAREN'
     p[0] = ('TYPEOF', p[3])
+
+def p_expression_length(p):
+    'expression : LENGTH LPAREN expression RPAREN'
+    p[0] = ('LENGTH', p[3])
 
 def p_expression_select(p):
     'expression : VARIABLE LSQUARE expression RSQUARE'

@@ -177,9 +177,9 @@ def runtime(p, context = variables):
         elif p[0] == 'FOR':
             a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ int ])
             b = PlyTypeError.require(currentframe(), runtime(p[2], context), [ int ])
-            for i in range(a, b + 1):
+            for i in range(a, b):
                 scope = context.copy()
-                scope['__i__'] = Variable(i - 1, Variable.number, False, None)
+                scope['__i__'] = Variable(i, Variable.number, False, None)
                 runtime(p[3], scope)
 
                 a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ int ]) # refresh
@@ -203,13 +203,16 @@ def runtime(p, context = variables):
                     if len(c) != 1:
                         raise PlyTypeError(currentframe(), 'this method wait a variable of type <type \'char\'> instead of <type \'str\'>')
                     elif b < 0 or b > len(c) - 1:
-                        raise PlyRangeError.out(currentframe(), c)
+                        raise PlyRangeError.out(currentframe(), a.value)
 
                     d = list(a.value)
                     d[b] = c[0]
                     a.value = ''.join(d)
                 else:
                     c = PlyTypeError.require(currentframe(), runtime(p[4], context), [ bool, int, float, str ])
+                    if b < 0 or b > len(c) -1:
+                        raise PlyRangeError.out(currentframe(), a.value)
+
                     a.value[b] = c
             except LookupError:
                 raise PlySyntaxError.undefined(currentframe(), p[2])
@@ -225,10 +228,13 @@ def runtime(p, context = variables):
 
                 if _ is not None:
                     a = PlyTypeError.require(currentframe(), runtime(p[2], context), [ int, str ])
-                    if type(a) is int:
-                        return _[a]
-                    elif type(a) is str:
-                        return _.index(a) # indexOf
+                    try:
+                        if type(a) is int:
+                            return _[a]
+                        elif type(a) is str:
+                            return _.index(a) # indexOf
+                    except LookupError:
+                        raise PlyRangeError.out(currentframe(), _)
             except ValueError:
                 return -1
             except LookupError:
@@ -275,6 +281,25 @@ def runtime(p, context = variables):
             try:
                 variables[p[1]]
                 del variables[p[1]]
+            except LookupError:
+                raise PlySyntaxError.undefined(currentframe(), p[1])
+        elif p[0] == 'LENGTH':
+            try:
+                a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ str, list ])
+                return len(a)
+            except LookupError:
+                raise PlySyntaxError.undefined(currentframe(), p[1])
+        elif p[0] == 'UNPACK':
+            try:
+                variables[p[1]]
+
+                a = Variable.getScope(variables[p[1]])
+                b = PlyTypeError.require(currentframe(), runtime(a.value, context), [ int, float, str ])
+
+                if type(b) is str:
+                    return list(b)
+                else:
+                    return list(str(b))
             except LookupError:
                 raise PlySyntaxError.undefined(currentframe(), p[1])
         else:

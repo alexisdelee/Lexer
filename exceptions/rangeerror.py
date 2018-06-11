@@ -11,7 +11,11 @@ class PlyRangeError(PlyError):
     @staticmethod
     def out(frame, var):
         if type(var) is str:
-            return PlyRangeError(frame, 'string out of range')
+            return PlyRangeError(frame, 'string index out of range')
+        elif type(var) is list:
+            return PlyRangeError(frame, 'list index out of range')
+        else:
+            return PlyRangeError(frame, 'index out of range')
 
     def __str__(self):
         frameinfo = getframeinfo(self.frame)
