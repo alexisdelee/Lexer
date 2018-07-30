@@ -1,2 +1,5 @@
 .idea/
+__pycache__/
+exceptions/__pycache__/
+ply/__pycache__/
 venv/

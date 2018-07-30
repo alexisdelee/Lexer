@@ -56,20 +56,3 @@ class Variable:
             return Variable.getScope(_)
         else:
             return _
-
-    @staticmethod
-    def getReferenceType(var):
-        flag = 0
-
-        _ = Variable.getScope(var)
-        if type(_.value) is int or type(_.value) is float:
-            flag = Variable.number
-        elif type(_.value) is str:
-            flag = Variable.string
-        elif _.type & Variable.function:
-            flag = Variable.function
-
-        if var.type & Variable.pointer:
-            flag = flag | Variable.pointer
-
-        return flag

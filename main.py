@@ -1,10 +1,8 @@
+import sys
 from inspect import currentframe
 from exceptions.error import PlyError
 from exceptions.internalerror import PlyInternalError
-from exceptions.rangeerror import PlyRangeError
 from exceptions.syntaxerror import PlySyntaxError
-from exceptions.typeerror import PlyTypeError
-
 from runtime import runtime, Variable
 
 reserved = {
@@ -62,7 +60,6 @@ t_DIFFERENT = r'!='
 
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
-    # t.value = int(t.value)
     t.value = float(t.value) if '.' in t.value else int(t.value)
     return t
 
@@ -396,6 +393,9 @@ while True:
         break
 
     try:
+        if s == "exit":
+            sys.exit(0)
+
         yacc.parse(s)
     except PlyError as e:
         print(e)

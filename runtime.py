@@ -190,7 +190,7 @@ def runtime(p, context = variables):
                 runtime(p[2], context.copy())
                 a = PlyTypeError.require(currentframe(), runtime(p[1], context), [ bool ]) # refresh
         elif p[0] == 'PRINT':
-            # return eval(p[1])
+            # return runtime(p[1], context)
             print(runtime(p[1], context))
         elif p[0] == 'SETAT':
             try:
